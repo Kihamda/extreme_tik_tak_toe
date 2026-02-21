@@ -1,0 +1,27 @@
+---
+import Layout from "../components/Layout.astro";
+import GameCard from "../components/GameCard.astro";
+import gamesData from "../data/games.json";
+
+const games = [...gamesData.games].sort((a, b) =>
+  a.featured === b.featured ? 0 : a.featured ? -1 : 1
+);
+---
+
+<Layout title="Game Portal" description="ブラウザゲームの一覧ポータル">
+  <section class="hero">
+    <h1>ブラウザゲームポータル</h1>
+    <p>ここからゲームを選んで即プレイできる</p>
+  </section>
+
+  <section class="grid">
+    {games.map((game) => <GameCard game={game} />)}
+  </section>
+</Layout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+</style>

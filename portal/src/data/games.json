@@ -1,0 +1,14 @@
+{
+  "games": [
+    {
+      "id": "ntiktaktoe",
+      "title": "n目並べ",
+      "description": "盤面サイズやプレイヤー人数を自由に調整できるエクストリームな n目並べ",
+      "path": "/games/ntiktaktoe/",
+      "thumbnail": "/thumbnails/ntiktaktoe.svg",
+      "tags": ["strategy", "multiplayer"],
+      "publishedAt": "2026-02-21",
+      "featured": true
+    }
+  ]
+}

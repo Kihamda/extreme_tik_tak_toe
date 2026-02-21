@@ -1,0 +1,185 @@
+name: Release Pipeline — Build & SNS Post
+
+# 新作ゲームリリース時に実行:
+# 1. ビルド最終確認
+# 2. Twitter / X に投稿
+#
+# 必要な GitHub Secrets:
+#   TWITTER_API_KEY            - Twitter API v2 Consumer Key
+#   TWITTER_API_SECRET         - Twitter API v2 Consumer Secret
+#   TWITTER_ACCESS_TOKEN       - Twitter API v2 Access Token
+#   TWITTER_ACCESS_TOKEN_SECRET - Twitter API v2 Access Token Secret
+#
+# 使い方:
+#   GitHub Actions タブ → "Release Pipeline" → "Run workflow"
+#   game_id と game_title と game_url を入力して実行
+
+on:
+  workflow_dispatch:
+    inputs:
+      game_id:
+        description: "ゲームID (例: ntiktaktoe)"
+        required: true
+        type: string
+      game_title:
+        description: "ゲームタイトル (例: n目並べ)"
+        required: true
+        type: string
+      game_url:
+        description: "Vercel の URL (例: https://ntiktaktoe.vercel.app)"
+        required: true
+        type: string
+      game_description:
+        description: "一言説明 (100文字以内)"
+        required: true
+        type: string
+      post_to_twitter:
+        description: "Twitter に投稿する"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+  # タグ push でも起動できるようにする (games/ntiktaktoe@v1.0.0 形式)
+  push:
+    tags:
+      - "games/*@v*"
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve game directory
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            GAME_ID=$(echo "${{ github.ref_name }}" | sed 's|games/||' | sed 's|@.*||')
+          else
+            GAME_ID="${{ inputs.game_id }}"
+          fi
+          echo "game_id=$GAME_ID" >> $GITHUB_OUTPUT
+          if [ -d "games/$GAME_ID" ]; then
+            echo "game_dir=games/$GAME_ID" >> $GITHUB_OUTPUT
+          else
+            echo "game_dir=." >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: ${{ steps.resolve.outputs.game_dir }}/package-lock.json
+
+      - name: Install & Lint & Build
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+        working-directory: ${{ steps.resolve.outputs.game_dir }}
+
+  post-twitter:
+    runs-on: ubuntu-latest
+    needs: build-check
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.post_to_twitter == 'true') ||
+      (github.event_name == 'push')
+    steps:
+      - name: Compose tweet text
+        id: tweet
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TITLE="${{ inputs.game_title }}"
+            URL="${{ inputs.game_url }}"
+            DESC="${{ inputs.game_description }}"
+          else
+            GAME_ID=$(echo "${{ github.ref_name }}" | sed 's|games/||' | sed 's|@.*||')
+            TITLE="$GAME_ID"
+            URL="https://$GAME_ID.vercel.app"
+            DESC="新しいブラウザゲームを公開しました！"
+          fi
+
+          # 280文字以内に収まるテキスト
+          TEXT="🎮 新作公開！「${TITLE}」
+
+${DESC}
+
+▶ ${URL}
+
+#ブラウザゲーム #無料ゲーム #indiegame"
+
+          # 改行をエスケープして出力
+          echo "text<<EOF" >> $GITHUB_OUTPUT
+          echo "$TEXT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post to Twitter / X
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        run: |
+          # Twitter API v2 で投稿 (OAuth 1.0a)
+          # twitter-api-v2 が Secrets 未設定なら警告を出してスキップ
+          if [ -z "$TWITTER_API_KEY" ]; then
+            echo "⚠️  TWITTER_API_KEY が未設定です。投稿をスキップします。"
+            echo "   GitHub Secrets に以下を設定してください:"
+            echo "   - TWITTER_API_KEY"
+            echo "   - TWITTER_API_SECRET"
+            echo "   - TWITTER_ACCESS_TOKEN"
+            echo "   - TWITTER_ACCESS_TOKEN_SECRET"
+            exit 0
+          fi
+
+          # OAuth 1.0a ヘッダー生成
+          TIMESTAMP=$(date +%s)
+          NONCE=$(openssl rand -hex 16)
+          TWEET_TEXT=$(cat << 'TWEET'
+          ${{ steps.tweet.outputs.text }}
+          TWEET
+          )
+
+          # curl で Twitter API v2 に投稿
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.twitter.com/2/tweets" \
+            --oauth1-consumer-key "$TWITTER_API_KEY" \
+            --oauth1-consumer-secret "$TWITTER_API_SECRET" \
+            --oauth1-access-token "$TWITTER_ACCESS_TOKEN" \
+            --oauth1-access-token-secret "$TWITTER_ACCESS_TOKEN_SECRET" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": $(echo "$TWEET_TEXT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()))')}" \
+            2>&1 || true)
+
+          echo "Response: $RESPONSE"
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          if [ "$HTTP_CODE" = "201" ]; then
+            echo "✅ Twitter 投稿成功"
+          else
+            echo "⚠️  Twitter 投稿失敗 (HTTP $HTTP_CODE)"
+            echo "   手動で投稿してください"
+          fi
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [build-check, post-twitter]
+    if: always()
+    steps:
+      - name: Job Summary
+        run: |
+          echo "## 🚀 Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| ステップ | 結果 |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Check | ${{ needs.build-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Twitter Post | ${{ needs.post-twitter.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "**ゲーム**: ${{ inputs.game_title }}" >> $GITHUB_STEP_SUMMARY
+            echo "**URL**: ${{ inputs.game_url }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "> main への push 後、build-and-deploy.yml が Cloudflare Pages に自動デプロイします" >> $GITHUB_STEP_SUMMARY
+          fi

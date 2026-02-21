@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# extreme_tik_tok_toe platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+このリポジトリはゲームプラットフォームのモノレポ構成
 
-Currently, two official plugins are available:
+## 構成
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `games/ntiktaktoe/` 既存の React + Vite ゲーム
+- `games/_template/` 新ゲーム追加テンプレート
+- `portal/` Astro SSG のゲーム一覧ポータル
+- `scripts/build-all.sh` platform 全体ビルド
 
-## React Compiler
+## セットアップ
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+ルートで依存関係をインストール
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 開発
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+ゲームを起動
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev:ntiktaktoe
 ```
+
+ポータルを起動
+
+```bash
+npm run dev:portal
+```
+
+## ビルド
+
+プラットフォーム全体を `dist/` に出力
+
+```bash
+npm run build
+```
+
+## lint
+
+ワークスペース全体で lint 実行
+
+```bash
+npm run lint:all
+```
+
+## 新ゲーム追加手順
+
+1. `games/_template` を `games/[your-id]` にコピー
+2. `vite.config.ts` の `base` を `/games/[your-id]/` に変更
+3. `portal/src/data/games.json` に登録
+4. `npm run build` で `dist/games/[your-id]/` が出ることを確認

@@ -1,0 +1,102 @@
+---
+interface Game {
+  id: string;
+  title: string;
+  description: string;
+  path: string;
+  thumbnail: string;
+  tags: string[];
+  publishedAt: string;
+  featured: boolean;
+}
+
+const { game } = Astro.props as { game: Game };
+---
+
+<article class="card">
+  <img src={game.thumbnail} alt={`${game.title} thumbnail`} loading="lazy" />
+  <div class="content">
+    <h2>{game.title}</h2>
+    <p>{game.description}</p>
+    <div class="tags">
+      {game.tags.map((tag) => <span>{tag}</span>)}
+    </div>
+    <div class="actions">
+      <a href={`/games/${game.id}`}>詳細</a>
+      <a href={game.path}>プレイ</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 160px;
+    background: #e2e8f0;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .content h2 {
+    margin: 0 0 8px;
+  }
+
+  .content p {
+    margin: 0 0 10px;
+    color: #334155;
+  }
+
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .tags span {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .actions a {
+    display: inline-flex;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 700;
+    background: #1d4ed8;
+    color: white;
+  }
+
+  @media (max-width: 720px) {
+    .card {
+      grid-template-columns: 1fr;
+    }
+
+    .card img {
+      min-height: 190px;
+    }
+  }
+</style>
