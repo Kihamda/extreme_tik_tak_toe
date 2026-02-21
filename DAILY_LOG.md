@@ -28,8 +28,25 @@
   - `copilot-instructions.md` の Agents テーブルに追記
   - `copilot-instructions.md` のパスエラー修正 (`src/lib/types.ts` → `games/ntiktaktoe/src/lib/types.ts`)
 - 22:54 [開始] エージェント構造の点検 → 担当: consultant
-- 22:54 [完了] エージェント構造の点検 → 結果: 成功（構成整合性を確認し、改善ポイント2件を特定）
+- 22:54 [完了] エージェント構造の点検 → 結果: 成功（構成整合性を確認し、改善ポイント3件を特定）
 - 22:54 [メモ] `.github/copilot-instructions.md` の Agents テーブルと Workflows テーブルに実体との差分あり
+- 23:08 [開始] エージェント構造の修正 + github-repo エージェント新設 → 担当: consultant
+- 23:08 [完了] エージェント構造の修正 + github-repo エージェント新設 → 結果: 成功
+  - `copilot-instructions.md` Agents テーブルに欠落5体 (seo-specialist, sns-manager, copywriter, qa-tester, github-repo) を追加
+  - `copilot-instructions.md` Prompts テーブルに platform-setup.prompt.md を追加
+  - `copilot-instructions.md` Workflows テーブルから実体なし deploy.yml を削除
+  - `.github/agents/github-repo.agent.md` を新規作成 (GitHub MCP 読み取り専門)
+  - `consultant.agent.md` のサブエージェント一覧に github-repo を追記
+  - `ROADMAP.md` のエージェントツリーに agent-editor と github-repo を追記
+- 23:30 [開始] GitHub Actions 失敗の調査・修正 → 担当: consultant
+- 23:45 [完了] GitHub Actions 失敗の修正 → 結果: CI 成功 / Deploy は Secrets 未設定で保留
+  - 原因: npm workspaces 構成なのに各 workflow が `games/*/package-lock.json` / `portal/package-lock.json` を`cache-dependency-path` に指定していたが個別 lock ファイルは存在しない
+  - 修正内容:
+    - `ci.yml`, `build-and-deploy.yml`, `release-pipeline.yml` の `cache-dependency-path` をルートの `package-lock.json` に統一
+    - 各ゲームloopの `npm ci` を削除 → ルートで一括 `npm ci` に変更
+    - `@esbuild/win32-x64` を `games/ntiktaktoe/package.json` から除外 (Linux CI で不要なWindows専用パッケージ)
+  - CI — Lint & Build: ✅ 成功
+  - Build & Deploy: ❌ Cloudflare Secrets 未設定 (コード問題ではなくリポジトリ設定の問題)
 
 ### 現在のフェーズ
 
@@ -49,6 +66,7 @@
 | copywriter         | 待機   |
 | qa-tester          | 待機   |
 | agent-editor       | 待機   |
+| github-repo        | 待機   |
 
 ### 次のアクション
 
