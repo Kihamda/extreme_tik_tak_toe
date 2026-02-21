@@ -38,8 +38,10 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-          cache-dependency-path: |
-            games/*/package-lock.json
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Lint & Build all games
         run: |
@@ -49,7 +51,7 @@ jobs:
             game_id="$(basename "$game_dir")"
             [ "$game_id" = "_template" ] && continue
             echo "── checking: $game_id ──"
-            (cd "$game_dir" && npm ci && npm run lint && npm run build)
+            (cd "$game_dir" && npm run lint && npm run build)
           done
 
   portal-build:
@@ -74,11 +76,13 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-          cache-dependency-path: portal/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install & Build portal
+      - name: Install dependencies
         if: steps.check.outputs.exists == 'true'
-        run: |
-          npm ci
-          npm run build
+        run: npm ci
+
+      - name: Build portal
+        if: steps.check.outputs.exists == 'true'
+        run: npm run build
         working-directory: portal

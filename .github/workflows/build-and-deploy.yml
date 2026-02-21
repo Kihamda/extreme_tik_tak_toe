@@ -31,6 +31,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      # 依存関係インストール (workspaces 一括)
+      - name: Install dependencies
+        run: npm ci
 
       # モノレポ移行後: 各ゲームの lint
       - name: Lint all games
@@ -41,7 +47,7 @@ jobs:
             game_id="$(basename "$game_dir")"
             [ "$game_id" = "_template" ] && continue
             echo "── lint: $game_id ──"
-            (cd "$game_dir" && npm ci --prefer-offline --silent && npm run lint)
+            (cd "$game_dir" && npm run lint)
           done
 
       # portal の lint
@@ -49,7 +55,6 @@ jobs:
         if: hashFiles('portal/package.json') != ''
         run: |
           cd portal
-          npm ci --prefer-offline --silent
           npm run lint --if-present
 
       # 統合ビルド
