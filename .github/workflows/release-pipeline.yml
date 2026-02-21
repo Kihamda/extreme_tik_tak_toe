@@ -38,7 +38,9 @@ on:
         required: false
         default: "true"
         type: choice
-        options: ["true", "false"]
+        options:
+          - "true"
+          - "false"
 
   # タグ push でも起動できるようにする (games/ntiktaktoe@v1.0.0 形式)
   push:
@@ -85,9 +87,7 @@ jobs:
   post-twitter:
     runs-on: ubuntu-latest
     needs: build-check
-    if: |
-      (github.event_name == 'workflow_dispatch' && inputs.post_to_twitter == 'true') ||
-      (github.event_name == 'push')
+    if: "(github.event_name == 'workflow_dispatch' && inputs.post_to_twitter == 'true') || github.event_name == 'push'"
     steps:
       - name: Compose tweet text
         id: tweet
@@ -103,7 +103,6 @@ jobs:
             DESC="新しいブラウザゲームを公開しました！"
           fi
 
-          # 280文字以内に収まるテキスト
           TEXT="🎮 新作公開！「${TITLE}」
 
 ${DESC}
@@ -112,7 +111,6 @@ ${DESC}
 
 #ブラウザゲーム #無料ゲーム #indiegame"
 
-          # 改行をエスケープして出力
           echo "text<<EOF" >> $GITHUB_OUTPUT
           echo "$TEXT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -123,47 +121,33 @@ ${DESC}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          TWEET_TEXT: ${{ steps.tweet.outputs.text }}
         run: |
-          # Twitter API v2 で投稿 (OAuth 1.0a)
-          # twitter-api-v2 が Secrets 未設定なら警告を出してスキップ
           if [ -z "$TWITTER_API_KEY" ]; then
             echo "⚠️  TWITTER_API_KEY が未設定です。投稿をスキップします。"
             echo "   GitHub Secrets に以下を設定してください:"
-            echo "   - TWITTER_API_KEY"
-            echo "   - TWITTER_API_SECRET"
-            echo "   - TWITTER_ACCESS_TOKEN"
-            echo "   - TWITTER_ACCESS_TOKEN_SECRET"
+            echo "   - TWITTER_API_KEY / TWITTER_API_SECRET"
+            echo "   - TWITTER_ACCESS_TOKEN / TWITTER_ACCESS_TOKEN_SECRET"
             exit 0
           fi
 
-          # OAuth 1.0a ヘッダー生成
-          TIMESTAMP=$(date +%s)
-          NONCE=$(openssl rand -hex 16)
-          TWEET_TEXT=$(cat << 'TWEET'
-          ${{ steps.tweet.outputs.text }}
-          TWEET
-          )
+          # twitter-api-v2 を一時インストールして投稿
+          cd /tmp
+          echo '{}' > package.json
+          npm install --silent twitter-api-v2
 
-          # curl で Twitter API v2 に投稿
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
-            "https://api.twitter.com/2/tweets" \
-            --oauth1-consumer-key "$TWITTER_API_KEY" \
-            --oauth1-consumer-secret "$TWITTER_API_SECRET" \
-            --oauth1-access-token "$TWITTER_ACCESS_TOKEN" \
-            --oauth1-access-token-secret "$TWITTER_ACCESS_TOKEN_SECRET" \
-            -H "Content-Type: application/json" \
-            -d "{\"text\": $(echo "$TWEET_TEXT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()))')}" \
-            2>&1 || true)
-
-          echo "Response: $RESPONSE"
-
-          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-          if [ "$HTTP_CODE" = "201" ]; then
-            echo "✅ Twitter 投稿成功"
-          else
-            echo "⚠️  Twitter 投稿失敗 (HTTP $HTTP_CODE)"
-            echo "   手動で投稿してください"
-          fi
+          node - << 'SCRIPT'
+          const { TwitterApi } = require('/tmp/node_modules/twitter-api-v2');
+          const client = new TwitterApi({
+            appKey:     process.env.TWITTER_API_KEY,
+            appSecret:  process.env.TWITTER_API_SECRET,
+            accessToken: process.env.TWITTER_ACCESS_TOKEN,
+            accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+          });
+          client.v2.tweet(process.env.TWEET_TEXT)
+            .then(r => { console.log('✅ Twitter 投稿成功:', r.data.id); process.exit(0); })
+            .catch(e => { console.warn('⚠️  Twitter 投稿失敗:', e.message); process.exit(0); });
+          SCRIPT
 
   summary:
     runs-on: ubuntu-latest
