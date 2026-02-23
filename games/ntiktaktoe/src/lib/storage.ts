@@ -1,12 +1,20 @@
 import { type DevicePreferences, type PersistedState } from "./types";
 import { DEVICE_PREFS_KEY, STORAGE_KEY } from "./constants";
-import { createDefaultDevicePreferences } from "./settings";
+import { createDefaultDevicePreferences, normalizeGameSettings } from "./settings";
 
 export const loadGameState = (): Partial<PersistedState> | null => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved) as Partial<PersistedState>;
+      if (parsed.gameSettings) {
+        return {
+          ...parsed,
+          gameSettings: normalizeGameSettings(parsed.gameSettings),
+        };
+      }
+
+      return parsed;
     }
   } catch (error) {
     console.error("Failed to load game state:", error);
@@ -37,7 +45,7 @@ export const loadDevicePreferences = (): DevicePreferences => {
           typeof parsed.confirmationMode === "boolean"
             ? parsed.confirmationMode
             : defaults.confirmationMode,
-        lastGameSettings: parsed.lastGameSettings ?? defaults.lastGameSettings,
+        lastGameSettings: normalizeGameSettings(parsed.lastGameSettings),
       };
     }
   } catch (error) {

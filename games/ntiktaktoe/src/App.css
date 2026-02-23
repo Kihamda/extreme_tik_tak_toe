@@ -173,6 +173,25 @@ body {
   border-color: #7986cb;
 }
 
+.mode-row {
+  align-items: center;
+}
+
+.mode-row select {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  color: #424242;
+}
+
+.mode-row select:focus {
+  outline: none;
+  border-color: #7986cb;
+}
+
 .size-inputs {
   flex: 1;
   display: flex;
@@ -724,6 +743,19 @@ body {
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 2px solid #e0e0e0;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #edeffb;
+  color: #5c6bc0;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .player-indicator .label {

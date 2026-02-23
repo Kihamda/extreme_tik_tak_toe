@@ -1,4 +1,4 @@
-import type { GameSettings, PersistedState } from "../lib/types";
+import type { GameMode, GameSettings, PersistedState } from "../lib/types";
 
 interface StartScreenProps {
   savedState: Partial<PersistedState> | null;
@@ -71,6 +71,13 @@ const StartScreen = ({
     onToggleConfirmation(checked);
   };
 
+  const updateGameMode = (mode: GameMode) => {
+    onNewGameSettingsChange({
+      ...newGameSettings,
+      gameMode: mode,
+    });
+  };
+
   return (
     <div className="start-screen">
       <h1 className="game-title">エクストリーム○×ゲーム</h1>
@@ -112,6 +119,16 @@ const StartScreen = ({
           <div className="start-card settings-card">
             <h2>設定</h2>
             <div className="settings-options">
+              <div className="setting-row mode-row">
+                <label>ゲームモード</label>
+                <select
+                  value={newGameSettings.gameMode}
+                  onChange={(e) => updateGameMode(e.target.value as GameMode)}
+                >
+                  <option value="classic">クラシック</option>
+                  <option value="gravity">重力あり</option>
+                </select>
+              </div>
               <label className="checkbox-label-inline">
                 <input
                   type="checkbox"

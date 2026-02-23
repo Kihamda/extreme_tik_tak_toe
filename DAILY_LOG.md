@@ -9,6 +9,12 @@
 
 ### 作業ログ
 
+- 11:20 [開始] バリエーション追加後のビルド修復 + デプロイ完了まで実施 → 担当: consultant（qa-tester / platform-architect に順次委譲）
+
+- 11:00 [開始] ゲームのバリエーションを1つ追加 → 担当: consultant（gamedev に委譲）
+- 11:12 [完了] ゲームのバリエーションを1つ追加 → 結果: 成功（`gravity` モード追加 + モード選択UI追加 + 既存データ後方互換）
+- 11:12 [メモ] `games/ntiktaktoe` の型/設定/ストレージ/盤面ロジック/UI を一式更新し `get_errors` でエラー0を確認
+
 - [開始] consultant 委譲不全の修正 + CI 差分ビルド対応 → 担当: consultant (agent-editor 委譲不要な設定変更のため直接対応)
 - [完了] `.github/agents/consultant.agent.md` を全書き直し
   - 二重ネストの chatagent ブロック (5バッククォート外側 + 3バッククォート内側) を修正 → 正規形式に統一

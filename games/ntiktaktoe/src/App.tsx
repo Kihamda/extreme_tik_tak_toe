@@ -4,7 +4,7 @@ import "./App.css";
 import StartScreen from "./components/StartScreen";
 import GameView from "./components/GameView";
 import ResultScreen from "./components/ResultScreen";
-import { cloneGameSettings } from "./lib/settings";
+import { cloneGameSettings, normalizeGameSettings } from "./lib/settings";
 import {
   loadGameState,
   saveGameState,
@@ -12,7 +12,12 @@ import {
   loadDevicePreferences,
   saveDevicePreferences,
 } from "./lib/storage";
-import { createEmptyBoard, cloneBoard, checkWin } from "./lib/board";
+import {
+  createEmptyBoard,
+  cloneBoard,
+  checkWin,
+  resolveMovePosition,
+} from "./lib/board";
 import {
   addPlayerToSettings,
   removePlayerFromSettings,
@@ -36,7 +41,7 @@ function App() {
   );
   const [currentGameSettings, setCurrentGameSettings] = useState<GameSettings>(
     initialSavedState?.gameSettings
-      ? cloneGameSettings(initialSavedState.gameSettings)
+      ? cloneGameSettings(normalizeGameSettings(initialSavedState.gameSettings))
       : cloneGameSettings(initialDevicePrefs.lastGameSettings),
   );
   const [newGameSettings, setNewGameSettings] = useState<GameSettings>(
@@ -107,19 +112,28 @@ function App() {
   };
 
   const handleCellClick = (row: number, col: number) => {
-    if (board[row]?.[col] !== null || winner !== null || isTransitioning)
-      return;
+    if (winner !== null || isTransitioning) return;
+
+    const resolvedMove = resolveMovePosition(
+      board,
+      row,
+      col,
+      currentGameSettings,
+    );
+    if (!resolvedMove) return;
 
     if (confirmationMode) {
-      setPendingMove({ row, col });
+      setPendingMove(resolvedMove);
     } else {
-      confirmMove(row, col);
+      confirmMove(resolvedMove.row, resolvedMove.col);
     }
   };
 
   const confirmMove = (row: number, col: number) => {
     const currentPlayer = currentGameSettings.players[currentPlayerIndex];
     if (!currentPlayer) return;
+    if (board[row]?.[col] !== null) return;
+
     const newBoard = cloneBoard(board);
     newBoard[row][col] = currentPlayer.mark;
     setBoard(newBoard);

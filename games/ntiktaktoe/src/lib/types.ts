@@ -7,6 +7,8 @@ export interface Player {
   color: string;
 }
 
+export type GameMode = "classic" | "gravity";
+
 export interface GameSettings {
   board: {
     width: number;
@@ -14,6 +16,7 @@ export interface GameSettings {
   };
   players: Player[];
   winLength: number;
+  gameMode: GameMode;
 }
 
 type AppPhase = "before" | "in_progress" | "after";

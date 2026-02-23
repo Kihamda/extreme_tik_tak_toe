@@ -1,4 +1,4 @@
-import type { Board, GameSettings } from "./types";
+import type { Board, GameSettings, PendingMove } from "./types";
 
 export const createEmptyBoard = (settings: GameSettings): Board => {
   return Array(settings.board.height)
@@ -7,6 +7,38 @@ export const createEmptyBoard = (settings: GameSettings): Board => {
 };
 
 export const cloneBoard = (board: Board): Board => board.map((row) => [...row]);
+
+export const resolveMovePosition = (
+  board: Board,
+  row: number,
+  col: number,
+  settings: GameSettings,
+): PendingMove | null => {
+  const {
+    board: { width, height },
+    gameMode,
+  } = settings;
+
+  if (col < 0 || col >= width || row < 0 || row >= height) {
+    return null;
+  }
+
+  if (gameMode === "gravity") {
+    for (let currentRow = height - 1; currentRow >= 0; currentRow--) {
+      if (board[currentRow][col] === null) {
+        return { row: currentRow, col };
+      }
+    }
+
+    return null;
+  }
+
+  if (board[row][col] !== null) {
+    return null;
+  }
+
+  return { row, col };
+};
 
 export const checkWin = (
   board: Board,
