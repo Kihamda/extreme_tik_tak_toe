@@ -174,13 +174,15 @@ const App = () => {
             <p className="statusText">
               {phase === "playing" && (
                 <>
-                  手番 {PLAYER_LABEL[currentPlayer]} 
-                  <span className={`chip ${PLAYER_COLOR_CLASS[currentPlayer]}`} />
+                  手番 {PLAYER_LABEL[currentPlayer]}
+                  <span
+                    className={`chip ${PLAYER_COLOR_CLASS[currentPlayer]}`}
+                  />
                 </>
               )}
               {phase === "finished" && winner && (
                 <>
-                  勝者 {PLAYER_LABEL[winner]} 
+                  勝者 {PLAYER_LABEL[winner]}
                   <span className={`chip ${PLAYER_COLOR_CLASS[winner]}`} />
                 </>
               )}
@@ -194,7 +196,9 @@ const App = () => {
                   className="dropButton"
                   type="button"
                   onClick={() => handleDrop(col)}
-                  disabled={phase !== "playing" || getDropRow(board, col) === null}
+                  disabled={
+                    phase !== "playing" || getDropRow(board, col) === null
+                  }
                 >
                   ↓
                 </button>

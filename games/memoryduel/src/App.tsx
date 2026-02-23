@@ -214,11 +214,15 @@ const App = () => {
             </p>
 
             <div className="scoreRow">
-              <div className={`scoreCard ${turn === "p1" && phase === "playing" ? "active" : ""}`}>
+              <div
+                className={`scoreCard ${turn === "p1" && phase === "playing" ? "active" : ""}`}
+              >
                 <span>プレイヤー1</span>
                 <strong>{scores.p1}</strong>
               </div>
-              <div className={`scoreCard ${turn === "p2" && phase === "playing" ? "active" : ""}`}>
+              <div
+                className={`scoreCard ${turn === "p2" && phase === "playing" ? "active" : ""}`}
+              >
                 <span>プレイヤー2</span>
                 <strong>{scores.p2}</strong>
               </div>
@@ -235,7 +239,9 @@ const App = () => {
                     className={`card ${faceUp ? "open" : ""} ${card.state === "matched" ? "matched" : ""} ${ownerClass}`}
                     type="button"
                     onClick={() => handleCardClick(index)}
-                    disabled={phase !== "playing" || lockBoard || card.state !== "down"}
+                    disabled={
+                      phase !== "playing" || lockBoard || card.state !== "down"
+                    }
                   >
                     <span>{faceUp ? card.symbol : "?"}</span>
                   </button>
