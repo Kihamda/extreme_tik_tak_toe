@@ -7,58 +7,42 @@
 
 ## 🔴 一度だけやること (初期セットアップ)
 
-### 1. Cloudflare Pages セットアップ
+### 1. XServer Static FTP セットアップ
 
-1. [cloudflare.com](https://cloudflare.com) で無料アカウント作成
-2. Dashboard → Pages → "Create a project" → "Connect to Git"
-3. `extreme_tik_tok_toe` リポジトリを選択
-4. **Build 設定**:
-   - Build command: `bash scripts/build-all.sh`
-   - Build output directory: `dist`
-   - Node version (Environment variable): `NODE_VERSION` = `20`
-5. "Save and Deploy" 押す → URLをメモ: `https://[project].pages.dev`
-
-> 以後は main push するだけで自動デプロイされる。**(GitHub Actions に簡略化する場合は下記参照)**
-
----
-
-### 1b. GitHub Actions から CF Pages にデプロイする場合 (lint チェック付き)
-
-lint 通過後にデプロイしたい場合はこちらを設定する。
-
-1. [Cloudflare Dashboard](https://dash.cloudflare.com) → "My Profile" → "API Tokens" → "Create Token"
-   - "Edit Cloudflare Workers" テンプレートをベースに
-   - Permissions: **Cloudflare Pages: Edit**
-   - "Create Token" → トークンを**コピペースト**
-2. Cloudflare Dashboard → 右上アイコン → Account ID をコピペースト
+1. [XServer Static](https://secure.xserver.ne.jp/xinfo/?action_register_index=true&service=xstatic) でアカウント作成（無料プランあり）
+2. XServer アカウント → サーバー設定 → **FTP の利用** → ON にしてパスワードを設定
+   - FTPホスト名（`sv***.static.ne.jp`）とユーザー名をメモする
 3. GitHub リポジトリ → Settings → Secrets and variables → Actions → "New repository secret"
+   以下を3つ登録する:
    ```
-   CLOUDFLARE_API_TOKEN   ← 手順 1 のトークン
-   CLOUDFLARE_ACCOUNT_ID  ← 手順 2 の Account ID
+   FTP_SERVER    ← FTPホスト名 (sv***.static.ne.jp)
+   FTP_USERNAME  ← FTPユーザー名
+   FTP_PASSWORD  ← FTPパスワード
    ```
-4. GitHub リポジトリ → Settings → Secrets and variables → Actions → "Variables" → "New repository variable"
+4. （任意）アップロード先をサブディレクトリに変えたい場合は Variables に追加:
    ```
-   CF_PAGES_PROJECT_NAME  ← Cloudflare Pages のプロジェクト名 (例: game-portal)
+   FTP_SERVER_DIR  ← アップロード先 (未設定時: public_html/)
    ```
+
+> main に push するだけで自動ビルド→FTPS転送→公開まで完了する。
+> デプロイは差分同期なので２回目以降は高速。
 
 ---
 
 ### 2. Google AdSense 審査申請
 
 1. [adsense.google.com](https://adsense.google.com) でアカウント作成
-2. サイト URL を登録 (`https://[project].pages.dev`)
-3. `<script>` タグを HTML に貼り付け → Copilot に「AdSenseタグを設置して」と頂む
-4. 审査は **2〜4週間**かかる。今すぐ申請しないと収益化が遅れる
-5. 审査通過後、パブリッシャーID (`ca-pub-xxxxxxxx`) を Cloudflare Pages の環境変数に設定:
-   - Cloudflare Dashboard → Pages → [project] → Settings → Environment variables
-   - `PUBLIC_ADSENSE_PUB_ID` = `ca-pub-xxxxxxxx`
+2. サイト URL を登録（XServer Static で設定したドメイン or `sv***.static.ne.jp`）
+3. `<script>` タグを HTML に貼り付け → Copilot に「AdSenseタグを設置して」と頑な
+4. 審査は **2～4週間**かかる。今すぐ申請しないと収益化が遅れる
+5. 審査通過後、パブリッシャーID (`ca-pub-xxxxxxxx`) を portal の環境変数として Copilot に設定依頼する
 
 ---
 
 ### 3. Google Search Console 登録
 
 1. [search.google.com/search-console](https://search.google.com/search-console) にアクセス
-2. "プロパティを追加" → Cloudflare Pages の URL を入力
+2. "プロパティを追加" → XServer Static の公開 URL を入力
 3. 所有権確認: HTML ファイル方式 → Copilot に「Search Console の確認ファイルを portal/public/ に置いて」と頂む
 4. `sitemap.xml` を送信 (Copilot が生成済みなら URL を入力するだけ)
 
@@ -83,7 +67,7 @@ SNS 自動投稿を使うなら必要。使わないなら不要。
 
 ### 5. GitHub Pages を無効化 (必須)
 
-Cloudflare Pages 一本化するので古い deploy.yml による GitHub Pages デプロイは履歴に残すだけで守りはない。気になるなら:
+XServer Static 一本化するので古い deploy.yml による GitHub Pages デプロイは履歴に残すだけで守りはない。気になるなら:
 
 - リポジトリ Settings → Pages → Source を "None" に変更
 - または Copilot に 「.github/workflows/deploy.yml を削除して」と頂む
@@ -98,7 +82,7 @@ Cloudflare Pages 一本化するので古い deploy.yml による GitHub Pages �
 | サムネイル画像を置く | 5分      | `portal/public/thumbnails/[id].png` を 640x360 で用意して git push |
 
 それ以外 (コード・SEO・PWA・portal 更新) は全部 Copilot がやる。
-**ゲーム追加は `git push` するだけで CF Pages 自動デプロイされる。Vercel 添加は不要。**
+**ゲーム追加は `git push` するだけで XServer Static に自動デプロイされる。**
 
 ---
 
@@ -120,8 +104,9 @@ Cloudflare Pages 一本化するので古い deploy.yml による GitHub Pages �
 ## メモ欄 (自分で埋める)
 
 ```
-Cloudflare Pages URL     : https://_________________.pages.dev
-Cloudflare Account ID    : _________________________________
+XServer Static URL       : https://________________________________
+XServer FTPホスト名       : sv___.static.ne.jp
+XServer FTPユーザー名     : ___________________________
 AdSense Publisher ID     : ca-pub-_________________
 GA4 Measurement ID       : G-_________________
 Search Console 登録日  : 20__-__-__
