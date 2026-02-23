@@ -9,6 +9,8 @@
 
 ### 作業ログ
 
+- 12:20 [メモ] GitHub運用を変更: 以後は `dev` への push までを実施。PR作成と `main` マージは人間側監査で実施
+
 - 12:15 [開始] Game #2 品質チェック + リリース実施 → 担当: consultant（qa-tester / platform-architect に順次委譲）
 
 - 11:50 [開始] Game #2 を新規追加（別ゲーム） → 担当: consultant（game-factory に委譲）
