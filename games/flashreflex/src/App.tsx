@@ -13,9 +13,7 @@ function App() {
   const [phase, setPhase] = useState<Phase>("ready");
   const [round, setRound] = useState(1);
   const [scores, setScores] = useState<number[]>([]);
-  const [statusText, setStatusText] = useState(
-    "スタートを押して準備しよう",
-  );
+  const [statusText, setStatusText] = useState("スタートを押して準備しよう");
 
   useEffect(() => {
     return () => {
@@ -144,7 +142,9 @@ function App() {
         </button>
 
         <div className="hud">
-          <span>Round {Math.min(round, TOTAL_ROUNDS)} / {TOTAL_ROUNDS}</span>
+          <span>
+            Round {Math.min(round, TOTAL_ROUNDS)} / {TOTAL_ROUNDS}
+          </span>
           <span>Best {best > 0 ? `${best} ms` : "-"}</span>
           <span>Avg {average > 0 ? `${average} ms` : "-"}</span>
         </div>
