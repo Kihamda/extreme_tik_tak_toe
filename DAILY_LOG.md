@@ -5,11 +5,36 @@
 
 ---
 
+## 2026-02-24
+
+### 作業ログ
+
+- 03:55 [開始] memoryduel の react-hooks/set-state-in-effect lint修正 → 担当: consultant（gamedev / qa-tester に順次委譲）
+- 03:57 [完了] memoryduel の react-hooks/set-state-in-effect lint修正 → 結果: 成功（effect内の同期setStateを導出状態へ移行して解消）
+- 03:57 [メモ] `games/memoryduel/src/App.tsx` の `setOpened([])` / `setPhase("finished")` 起因lintを解消し、Problemsでエラー0を確認
+- 03:41 [開始] トップ画面の刷新 + 2人対戦ゲームを2本追加 → 担当: consultant（game-factory / gamedev / qa-tester に順次委譲）
+- 03:51 [完了] トップ画面の刷新 + 2人対戦ゲームを2本追加 → 結果: 成功（トップ導線刷新 + `gravityfour` と `memoryduel` を追加）
+- 03:51 [メモ] 統合ビルド成功。`portal` に新着/おすすめ/ランダム導線を追加し、2本ともローカル2人対戦で実装済み
+
+### 今日の成果
+
+- ポータルのトップを再訪したくなる導線中心の情報設計に刷新
+- 2人対戦ゲームを2本追加し、`portal/src/data/games.json` へ登録完了
+
+### 明日やること
+
+- トップのヒーロー文言をA/Bで2パターン用意してクリック率比較
+- 新規2ゲームのSNS告知文面を作成して流入テスト
+
 ## 2026-02-23
 
 ### 作業ログ
 
+- 12:20 [メモ] GitHub運用を変更: 以後は `dev` への push までを実施。PR作成と `main` マージは人間側監査で実施
+
 - 12:15 [開始] Game #2 品質チェック + リリース実施 → 担当: consultant（qa-tester / platform-architect に順次委譲）
+- 12:32 [完了] Game #2 品質チェック + リリース実施 → 結果: 成功（品質チェック pass / `dev` へ push 完了）
+- 12:32 [メモ] `main` への直接操作は行わず `dev` push止まりで運用。PR作成とマージは人間側監査フローで実施
 
 - 11:50 [開始] Game #2 を新規追加（別ゲーム） → 担当: consultant（game-factory に委譲）
 - 12:05 [完了] Game #2 を新規追加（別ゲーム） → 結果: 成功（`games/flashreflex` 追加 + `portal/src/data/games.json` 登録）
