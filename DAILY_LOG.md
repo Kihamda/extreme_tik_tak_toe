@@ -9,6 +9,9 @@
 
 ### 作業ログ
 
+- 03:55 [開始] memoryduel の react-hooks/set-state-in-effect lint修正 → 担当: consultant（gamedev / qa-tester に順次委譲）
+- 03:57 [完了] memoryduel の react-hooks/set-state-in-effect lint修正 → 結果: 成功（effect内の同期setStateを導出状態へ移行して解消）
+- 03:57 [メモ] `games/memoryduel/src/App.tsx` の `setOpened([])` / `setPhase("finished")` 起因lintを解消し、Problemsでエラー0を確認
 - 03:41 [開始] トップ画面の刷新 + 2人対戦ゲームを2本追加 → 担当: consultant（game-factory / gamedev / qa-tester に順次委譲）
 - 03:51 [完了] トップ画面の刷新 + 2人対戦ゲームを2本追加 → 結果: 成功（トップ導線刷新 + `gravityfour` と `memoryduel` を追加）
 - 03:51 [メモ] 統合ビルド成功。`portal` に新着/おすすめ/ランダム導線を追加し、2本ともローカル2人対戦で実装済み

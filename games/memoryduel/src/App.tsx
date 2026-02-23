@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 type Player = "p1" | "p2";
-type Phase = "intro" | "playing" | "finished";
+type Phase = "intro" | "playing";
 
 type CardState = "down" | "up" | "matched";
 
@@ -51,7 +51,9 @@ const App = () => {
   const [turn, setTurn] = useState<Player>("p1");
   const [scores, setScores] = useState<ScoreState>({ p1: 0, p2: 0 });
   const [opened, setOpened] = useState<number[]>([]);
-  const [lockBoard, setLockBoard] = useState(false);
+  const lockBoard = opened.length === 2;
+  const isFinished =
+    phase === "playing" && cards.every((card) => card.state === "matched");
 
   useEffect(() => {
     return () => {
@@ -71,12 +73,10 @@ const App = () => {
     const second = cards[secondIndex];
 
     if (!first || !second) {
-      setOpened([]);
       return;
     }
 
     const isMatch = first.symbol === second.symbol;
-    setLockBoard(true);
 
     timerRef.current = window.setTimeout(() => {
       if (isMatch) {
@@ -116,20 +116,9 @@ const App = () => {
       }
 
       setOpened([]);
-      setLockBoard(false);
       timerRef.current = null;
     }, 700);
   }, [cards, opened, turn]);
-
-  useEffect(() => {
-    if (phase !== "playing") {
-      return;
-    }
-
-    if (cards.every((card) => card.state === "matched")) {
-      setPhase("finished");
-    }
-  }, [cards, phase]);
 
   const startGame = () => {
     if (timerRef.current !== null) {
@@ -141,12 +130,11 @@ const App = () => {
     setTurn("p1");
     setScores({ p1: 0, p2: 0 });
     setOpened([]);
-    setLockBoard(false);
     setPhase("playing");
   };
 
   const handleCardClick = (index: number) => {
-    if (phase !== "playing" || lockBoard) {
+    if (phase !== "playing" || isFinished || lockBoard) {
       return;
     }
 
@@ -209,19 +197,19 @@ const App = () => {
         {phase !== "intro" && (
           <>
             <p className="statusText">
-              {phase === "playing" && <>手番 {PLAYER_LABEL[turn]}</>}
-              {phase === "finished" && <>{winnerText}</>}
+              {!isFinished && <>手番 {PLAYER_LABEL[turn]}</>}
+              {isFinished && <>{winnerText}</>}
             </p>
 
             <div className="scoreRow">
               <div
-                className={`scoreCard ${turn === "p1" && phase === "playing" ? "active" : ""}`}
+                className={`scoreCard ${turn === "p1" && !isFinished ? "active" : ""}`}
               >
                 <span>プレイヤー1</span>
                 <strong>{scores.p1}</strong>
               </div>
               <div
-                className={`scoreCard ${turn === "p2" && phase === "playing" ? "active" : ""}`}
+                className={`scoreCard ${turn === "p2" && !isFinished ? "active" : ""}`}
               >
                 <span>プレイヤー2</span>
                 <strong>{scores.p2}</strong>
@@ -240,7 +228,10 @@ const App = () => {
                     type="button"
                     onClick={() => handleCardClick(index)}
                     disabled={
-                      phase !== "playing" || lockBoard || card.state !== "down"
+                      phase !== "playing" ||
+                      isFinished ||
+                      lockBoard ||
+                      card.state !== "down"
                     }
                   >
                     <span>{faceUp ? card.symbol : "?"}</span>
