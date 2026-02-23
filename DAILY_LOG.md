@@ -12,6 +12,8 @@
 - 12:20 [メモ] GitHub運用を変更: 以後は `dev` への push までを実施。PR作成と `main` マージは人間側監査で実施
 
 - 12:15 [開始] Game #2 品質チェック + リリース実施 → 担当: consultant（qa-tester / platform-architect に順次委譲）
+- 12:32 [完了] Game #2 品質チェック + リリース実施 → 結果: 成功（品質チェック pass / `dev` へ push 完了）
+- 12:32 [メモ] `main` への直接操作は行わず `dev` push止まりで運用。PR作成とマージは人間側監査フローで実施
 
 - 11:50 [開始] Game #2 を新規追加（別ゲーム） → 担当: consultant（game-factory に委譲）
 - 12:05 [完了] Game #2 を新規追加（別ゲーム） → 結果: 成功（`games/flashreflex` 追加 + `portal/src/data/games.json` 登録）
