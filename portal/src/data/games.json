@@ -9,6 +9,16 @@
       "tags": ["strategy", "multiplayer"],
       "publishedAt": "2026-02-21",
       "featured": true
+    },
+    {
+      "id": "flashreflex",
+      "title": "Flash Reflex",
+      "description": "色の切り替わりに反応して最速タップを狙う5ラウンド反射神経ゲーム",
+      "path": "/games/flashreflex/",
+      "thumbnail": "/thumbnails/flashreflex.svg",
+      "tags": ["reflex", "arcade", "singleplayer"],
+      "publishedAt": "2026-02-23",
+      "featured": false
     }
   ]
 }
