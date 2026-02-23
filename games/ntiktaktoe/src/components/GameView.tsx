@@ -82,7 +82,8 @@ const GameView = ({
 
       <div className="floating-card game-info">
         <div className="mode-badge">
-          モード: {gameSettings.gameMode === "gravity" ? "重力あり" : "クラシック"}
+          モード:
+          {gameSettings.gameMode === "gravity" ? "重力あり" : "クラシック"}
         </div>
         <div className="player-indicator">
           <span className="label">現在のターン</span>

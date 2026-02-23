@@ -10,6 +10,8 @@
 ### 作業ログ
 
 - 11:20 [開始] バリエーション追加後のビルド修復 + デプロイ完了まで実施 → 担当: consultant（qa-tester / platform-architect に順次委譲）
+- 11:38 [完了] バリエーション追加後のビルド修復 + デプロイ完了まで実施 → 結果: 成功（build修復後に `main` push / Actions deploy success）
+- 11:38 [メモ] デプロイ実行コミット `0e4206867c3ae14282dbc0b7758f898f43bf0fbd` / Actions run `22307574858` 成功
 
 - 11:00 [開始] ゲームのバリエーションを1つ追加 → 担当: consultant（gamedev に委譲）
 - 11:12 [完了] ゲームのバリエーションを1つ追加 → 結果: 成功（`gravity` モード追加 + モード選択UI追加 + 既存データ後方互換）
@@ -47,7 +49,6 @@
 - XServer StaticのFTP Secrets設定完了後に本番デプロイ確認
 
 ---
-
 
 ## 2026-02-21
 

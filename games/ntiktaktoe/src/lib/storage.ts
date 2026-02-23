@@ -1,6 +1,9 @@
 import { type DevicePreferences, type PersistedState } from "./types";
 import { DEVICE_PREFS_KEY, STORAGE_KEY } from "./constants";
-import { createDefaultDevicePreferences, normalizeGameSettings } from "./settings";
+import {
+  createDefaultDevicePreferences,
+  normalizeGameSettings,
+} from "./settings";
 
 export const loadGameState = (): Partial<PersistedState> | null => {
   try {

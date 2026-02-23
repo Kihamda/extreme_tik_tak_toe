@@ -1,4 +1,9 @@
-import type { DevicePreferences, GameMode, GameSettings, Player } from "./types";
+import type {
+  DevicePreferences,
+  GameMode,
+  GameSettings,
+  Player,
+} from "./types";
 import { DEFAULT_COLORS } from "./constants";
 
 const MIN_BOARD_SIZE = 3;
@@ -93,7 +98,10 @@ export const normalizeGameSettings = (
     typeof settings?.winLength === "number"
       ? settings.winLength
       : defaults.winLength;
-  const winLength = Math.max(3, Math.min(maxWinLength, Math.floor(rawWinLength)));
+  const winLength = Math.max(
+    3,
+    Math.min(maxWinLength, Math.floor(rawWinLength)),
+  );
 
   return {
     board: { width, height },

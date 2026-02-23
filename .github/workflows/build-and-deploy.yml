@@ -37,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # HEAD と HEAD~1 の差分取得に必要
+          fetch-depth: 2 # HEAD と HEAD~1 の差分取得に必要
 
       - name: Detect portal / scripts changes
         uses: dorny/paths-filter@v3
@@ -170,7 +170,7 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./dist/
-          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+          server-dir: ${{ vars.FTP_SERVER_DIR || './' }}
           security: strict
           exclude: |
             **/.git*
