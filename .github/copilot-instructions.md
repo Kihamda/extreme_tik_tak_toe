@@ -138,7 +138,12 @@ DevicePreferences              // デバイス固有設定（確認モード等�
 | `.github/agents/growth.agent.md`             | 収益化・SEO・SNS戦略をコードレベルで実行                  |
 | `.github/agents/platform-architect.agent.md` | モノレポ移行・ポータル構築・Cloudflare Pages設定          |
 | `.github/agents/game-factory.agent.md`       | 「〇〇ゲームを作って」の一言で完成まで全工程実行          |
+| `.github/agents/seo-specialist.agent.md`     | SEO最適化・メタタグ・構造化データ・内部リンク             |
+| `.github/agents/sns-manager.agent.md`        | SNS運用・コンテンツカレンダー・GitHub Actions自動化       |
+| `.github/agents/copywriter.agent.md`         | ゲーム説明文・LP・マーケティングコピー執筆                |
+| `.github/agents/qa-tester.agent.md`          | ビルド検証・型チェック・パフォーマンス監査                |
 | `.github/agents/agent-editor.agent.md`       | エージェント/プロンプト/Copilot設定の管理・整合性チェック |
+| `.github/agents/github-repo.agent.md`        | GitHub MCP でリモートリポの状態確認・Issue/PR/CI監視      |
 
 ### Prompts (`#プロンプト名` で呼ぶ)
 
@@ -150,6 +155,7 @@ DevicePreferences              // デバイス固有設定（確認モード等�
 | `.github/prompts/game-ideation.prompt.md`      | 新作ゲーム企画を5本生成                |
 | `.github/prompts/pwa.prompt.md`                | PWA 実装 (vite-plugin-pwa)             |
 | `.github/prompts/seo.prompt.md`                | SEO / OGP / sitemap 対応               |
+| `.github/prompts/platform-setup.prompt.md`     | プラットフォーム基盤セットアップ       |
 | `.github/prompts/add-feature.prompt.md`        | 機能追加 (AI対戦・テーマ・統計等)      |
 | `.github/prompts/sns-automation.prompt.md`     | SNS 自動投稿スクリプト実装             |
 
@@ -160,7 +166,6 @@ DevicePreferences              // デバイス固有設定（確認モード等�
 | `.github/workflows/build-and-deploy.yml` | **メイン**: main push 時に全体ビルド + CF Pages 自動デプロイ |
 | `.github/workflows/ci.yml`               | PR 時の自動 lint + build チェック                            |
 | `.github/workflows/release-pipeline.yml` | リリース時の最終ビルド確認 + Twitter 自動投稿                |
-| `.github/workflows/deploy.yml`           | GitHub Pages デプロイ (移行前の暫定、将来削除予定)           |
 
 ### 人間がやること
 

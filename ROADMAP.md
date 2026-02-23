@@ -156,7 +156,9 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
         ├── @seo-specialist     SEO最適化・メタタグ・構造化データ
         ├── @sns-manager        SNS運用・自動投稿・バイラル戦略
         ├── @copywriter         ゲーム説明文・LP・マーケティングコピー
-        └── @qa-tester          ビルド検証・品質チェック・パフォーマンス
+        ├── @qa-tester          ビルド検証・品質チェック・パフォーマンス
+        ├── @agent-editor       エージェント/プロンプト/Copilot設定管理
+        └── @github-repo        GitHub MCPでリモートリポ監視
 ```
 
 ### 作業フロー例

@@ -105,11 +105,11 @@ jobs:
 
           TEXT="🎮 新作公開！「${TITLE}」
 
-${DESC}
+          ${DESC}
 
-▶ ${URL}
+          ▶ ${URL}
 
-#ブラウザゲーム #無料ゲーム #indiegame"
+          #ブラウザゲーム #無料ゲーム #indiegame"
 
           echo "text<<EOF" >> $GITHUB_OUTPUT
           echo "$TEXT" >> $GITHUB_OUTPUT

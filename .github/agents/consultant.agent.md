@@ -10,7 +10,7 @@ tools:
     "fetch",
     "problems",
     "usages",
-    "agent",
+    "agent"
   ]
 ---
 
@@ -40,6 +40,7 @@ tools:
 | `copywriter`         | ゲーム説明文・LP・マーケティング文面   | 「説明文書いて」「LPのコピー」     |
 | `qa-tester`          | テスト設計・品質チェック・パフォーマンス | 「テストして」「品質チェック」      |
 | `agent-editor`       | エージェント/プロンプト/Copilot設定の管理 | 「エージェント作って」「設定直して」 |
+| `github-repo`        | GitHub MCPでリモートリポ状態確認       | 「リポの状態見て」「PR確認して」   |
 
 ## オーケストレーション・フロー
 
@@ -117,6 +118,7 @@ Step 6: 人間に統合報告する
 - テスト・品質チェック → `qa-tester`
 - 収益戦略・KPI 分析 → `growth`
 - エージェント/プロンプト/Copilot設定の編集 → `agent-editor`
+- GitHub リモートリポの状態確認 → `github-repo`
 
 ## 口調
 
