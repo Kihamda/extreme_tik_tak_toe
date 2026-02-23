@@ -25,9 +25,73 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── ジョブ 1: lint + build (全ゲーム + portal) ───────────────────────
+  # ── ジョブ 0: 変更検出 ────────────────────────────────────────────────
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      portal: ${{ steps.filter.outputs.portal }}
+      any_game: ${{ steps.games.outputs.any }}
+      game_ids: ${{ steps.games.outputs.ids }}
+      force_full: ${{ steps.force.outputs.full }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # HEAD と HEAD~1 の差分取得に必要
+
+      - name: Detect portal / scripts changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            portal:
+              - 'portal/**'
+            full_rebuild:
+              - 'scripts/**'
+              - 'package.json'
+              - 'package-lock.json'
+
+      # フルビルドフラグ: scripts変更・依存変更・workflow_dispatch のいずれか
+      - name: Set force-full flag
+        id: force
+        run: |
+          if [ "${{ steps.filter.outputs.full_rebuild }}" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "full=true" >> $GITHUB_OUTPUT
+          else
+            echo "full=false" >> $GITHUB_OUTPUT
+          fi
+
+      # 変更されたゲームIDを検出 (例: ["ntiktaktoe","game2"])
+      - name: Detect changed game IDs
+        id: games
+        run: |
+          if [ "${{ steps.force.outputs.full }}" = "true" ]; then
+            IDS=$(ls games/ 2>/dev/null | grep -v '^_template$' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          else
+            BEFORE="${{ github.event.before }}"
+            [ "$BEFORE" = "0000000000000000000000000000000000000000" ] && BEFORE="HEAD~1"
+            IDS=$(git diff --name-only "$BEFORE" "${{ github.sha }}" 2>/dev/null \
+              | grep '^games/' \
+              | sed 's|^games/||; s|/.*||' \
+              | sort -u \
+              | grep -v '^_template$' \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))' \
+              || echo '[]')
+          fi
+          echo "ids=$IDS" >> $GITHUB_OUTPUT
+          ANY=$(echo "$IDS" | jq '. | length > 0')
+          echo "any=$ANY" >> $GITHUB_OUTPUT
+          echo "変更ゲーム: $IDS"
+
+  # ── ジョブ 1: lint + build (変更ゲーム + portal) ─────────────────────
   build:
     runs-on: ubuntu-latest
+    needs: detect-changes
+    # 何も変わっていなければスキップ (workflow_dispatch は常に実行)
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      needs.detect-changes.outputs.portal == 'true' ||
+      needs.detect-changes.outputs.any_game == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,24 +106,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint all games
-        if: hashFiles('games/*/package.json') != ''
+      # 変更ゲームのみ lint (フルビルド時は全ゲーム)
+      - name: Lint changed games
         run: |
+          GAME_IDS='${{ needs.detect-changes.outputs.game_ids }}'
+          FORCE='${{ needs.detect-changes.outputs.force_full }}'
           for pkg in games/*/package.json; do
             game_dir="$(dirname "$pkg")"
             game_id="$(basename "$game_dir")"
             [ "$game_id" = "_template" ] && continue
+            # フルビルドでなければ変更対象のみ lint
+            if [ "$FORCE" != "true" ] && ! echo "$GAME_IDS" | jq -e --arg id "$game_id" '. | index($id) != null' > /dev/null 2>&1; then
+              echo "  ⏭  lint skip: $game_id (変更なし)"
+              continue
+            fi
             echo "── lint: $game_id ──"
             (cd "$game_dir" && npm run lint)
           done
 
       - name: Lint portal
-        if: hashFiles('portal/package.json') != ''
+        if: needs.detect-changes.outputs.portal == 'true' || needs.detect-changes.outputs.force_full == 'true'
         run: |
           cd portal
           npm run lint --if-present
 
-      - name: Build platform (all games + portal → dist/)
+      - name: Build platform (変更ゲーム + portal → dist/)
+        env:
+          BUILD_GAME_IDS: ${{ needs.detect-changes.outputs.game_ids }}
+          FORCE_FULL_BUILD: ${{ needs.detect-changes.outputs.force_full }}
+          PORTAL_CHANGED: ${{ needs.detect-changes.outputs.portal }}
         run: bash scripts/build-all.sh
 
       - name: Upload dist artifact

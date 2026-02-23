@@ -6,9 +6,15 @@
 #   dist/               ← portal (ゲーム一覧・マニフェスト・SW)
 #   dist/games/[id]/    ← 各ゲーム
 #
-# 使い方:
-#   bash scripts/build-all.sh            # 全ゲーム
-#   bash scripts/build-all.sh ntiktaktoe # 特定ゲームのみ (portal は常にビルド)
+# 使い方 (ローカル):
+#   bash scripts/build-all.sh              # 全ゲーム
+#   bash scripts/build-all.sh ntiktaktoe   # 特定ゲームのみ (portal は常にビルド)
+#
+# CI 環境変数 (GitHub Actions からセットされる):
+#   BUILD_GAME_IDS    - ビルド対象ゲームID の JSON配列 (例: ["ntiktaktoe","game2"])
+#                       空配列 [] の場合は全ゲームをビルド
+#   FORCE_FULL_BUILD  - "true" で全ゲームを強制ビルド (scripts/package.json 変更時)
+#   PORTAL_CHANGED    - "true" の場合でも portal は常にビルドするため実質未使用
 
 set -euo pipefail
 
@@ -23,42 +29,57 @@ echo "Output: $DIST_DIR"
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 
-# ── 2. portal をビルド (root に展開) ─────────────────────────────────
+# ── 2. portal をビルド ────────────────────────────────────────────────
+# portal は常にビルドする (全ゲームへのリンクを含むため)
 echo ""
 echo "→ Building portal..."
 cd "$ROOT_DIR/portal"
 npm install --prefer-offline --silent
 npm run build
-# Astro は dist/ に出力する
 cp -r "$ROOT_DIR/portal/dist/." "$DIST_DIR/"
 echo "  ✅ portal → dist/"
 
 # ── 3. 各ゲームをビルド (/games/[id]/ に展開) ────────────────────────
+# 環境変数による差分ビルド制御:
+#   FORCE_FULL_BUILD=true  → 全ゲームビルド
+#   BUILD_GAME_IDS=["id1"] → JSON配列で指定されたゲームのみビルド
+#   TARGET_GAME=id        → 後方互換: 特定ゲームのみ (旧CLI引数)
+FORCE_FULL_BUILD="${FORCE_FULL_BUILD:-false}"
+BUILD_GAME_IDS="${BUILD_GAME_IDS:-[]}"
+
+# JSON配列にゲームIDが含まれるか判定 (jq が使える前提)
+_should_build_game() {
+  local game_id="$1"
+  if [ "$FORCE_FULL_BUILD" = "true" ]; then
+    return 0  # 全ビルド
+  fi
+  if [ -n "$TARGET_GAME" ]; then
+    [ "$game_id" = "$TARGET_GAME" ] && return 0 || return 1
+  fi
+  # BUILD_GAME_IDS が空配列なら全ビルド、そうでなければ含まれるか確認
+  local count
+  count=$(echo "$BUILD_GAME_IDS" | jq '. | length' 2>/dev/null || echo 0)
+  if [ "$count" = "0" ]; then
+    return 0  # 全ビルド (ローカル実行時など)
+  fi
+  echo "$BUILD_GAME_IDS" | jq -e --arg id "$game_id" '. | index($id) != null' > /dev/null 2>&1
+}
+
 GAMES_DIR="$ROOT_DIR/games"
 if [ ! -d "$GAMES_DIR" ]; then
   echo ""
   echo "  ⚠  games/ ディレクトリが存在しないためスキップ (モノレポ移行前)"
-  # 移行前: ルートの src/ をそのままビルドして dist/games/ntiktaktoe/ に配置
-  echo "→ Building root game (pre-migration)..."
-  cd "$ROOT_DIR"
-  if [ -f "package.json" ] && grep -q '"build"' package.json; then
-    npm install --prefer-offline --silent
-    npm run build
-    mkdir -p "$DIST_DIR/games/ntiktaktoe"
-    cp -r "$ROOT_DIR/dist_tmp/." "$DIST_DIR/games/ntiktaktoe/" 2>/dev/null || true
-  fi
 else
   for GAME_DIR in "$GAMES_DIR"/*/; do
     [ -d "$GAME_DIR" ] || continue
     [ -f "$GAME_DIR/package.json" ] || continue
 
     GAME_ID="$(basename "$GAME_DIR")"
-
-    # _template はビルドしない
     [ "$GAME_ID" = "_template" ] && continue
 
-    # 特定ゲームのみビルドするオプション
-    if [ -n "$TARGET_GAME" ] && [ "$GAME_ID" != "$TARGET_GAME" ]; then
+    if ! _should_build_game "$GAME_ID"; then
+      echo ""
+      echo "  ⏭  $GAME_ID: 変更なし、スキップ"
       continue
     fi
 

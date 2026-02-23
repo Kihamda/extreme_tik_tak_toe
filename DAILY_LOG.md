@@ -5,6 +5,44 @@
 
 ---
 
+## 2026-02-23
+
+### 作業ログ
+
+- [開始] consultant 委譲不全の修正 + CI 差分ビルド対応 → 担当: consultant (agent-editor 委譲不要な設定変更のため直接対応)
+- [完了] `.github/agents/consultant.agent.md` を全書き直し
+  - 二重ネストの chatagent ブロック (5バッククォート外側 + 3バッククォート内側) を修正 → 正規形式に統一
+  - ツールリストから `runCommands` を削除 (コンサルタントがコマンドを直接実行しないようにする)
+  - 委譲ルールを強化: 「⚠️ 絶対ルール: コードを自分で書かない」セクションを追加
+  - `#tool:agent/runSubagent` という古い構文を `agent` ツール参照に修正
+  - 「自分でやること (限定列挙)」「委譲先一覧」テーブルを追加して境界を明確化
+- [完了] `.github/workflows/build-and-deploy.yml` に差分ビルド対応
+  - `detect-changes` ジョブを追加 (dorny/paths-filter + カスタム git diff)
+  - 変更ゲームID を JSON 配列 `game_ids` として後続ジョブに渡す
+  - `build` ジョブ: `BUILD_GAME_IDS` / `FORCE_FULL_BUILD` 環境変数を設定してビルドスクリプトに渡す
+  - scripts/package.json 変更時は `FORCE_FULL_BUILD=true` で全ゲーム再ビルド
+  - portal / games 両方とも変更なしの場合はビルドジョブ自体をスキップ
+- [完了] `scripts/build-all.sh` に差分ビルドサポートを追加
+  - `BUILD_GAME_IDS` (JSON配列) で対象ゲームを絞り込む `_should_build_game()` 関数を追加
+  - `FORCE_FULL_BUILD=true` または空配列の場合は全ゲームビルド (後方互換あり)
+  - `TARGET_GAME` 第1引数によるローカル実行も維持
+  - portal は常にビルド (全ゲームへのリンクを保持するため)
+  - CI コメントを更新
+- [メモ] FTP差分デプロイはもともと `SamKirkland/FTP-Deploy-Action` が処理済み。今回でビルド時点からも差分化され CI minutes 削減効果が出る
+
+### 今日の成果
+
+- consultant の委譲機能が正しく動作するよう修正 (自己完結ループのバグ解消)
+- ゲーム追加時のCI時間を大幅削減: 変更のあったゲームのみ npm build
+
+### 明日やること
+
+- 差分ビルドの動作確認 (実際に1ゲームだけ変更してpushして確認)
+- XServer StaticのFTP Secrets設定完了後に本番デプロイ確認
+
+---
+
+
 ## 2026-02-21
 
 ### 作業ログ
