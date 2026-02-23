@@ -19,6 +19,26 @@
       "tags": ["reflex", "arcade", "singleplayer"],
       "publishedAt": "2026-02-23",
       "featured": false
+    },
+    {
+      "id": "gravityfour",
+      "title": "Gravity Four",
+      "description": "コインを列に落として4連結を狙うローカル2人対戦の重力四目並べ",
+      "path": "/games/gravityfour/",
+      "thumbnail": "/thumbnails/gravityfour.svg",
+      "tags": ["strategy", "board", "multiplayer"],
+      "publishedAt": "2026-02-24",
+      "featured": false
+    },
+    {
+      "id": "memoryduel",
+      "title": "Memory Duel",
+      "description": "神経衰弱を交互ターンで競うローカル2人対戦の記憶バトル",
+      "path": "/games/memoryduel/",
+      "thumbnail": "/thumbnails/memoryduel.svg",
+      "tags": ["memory", "card", "multiplayer"],
+      "publishedAt": "2026-02-24",
+      "featured": false
     }
   ]
 }
