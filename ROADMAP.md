@@ -33,15 +33,19 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 ---
 
-## 現在地 (2026-02-24 時点)
+## 現在地 (2026-02-25 時点)
 
 ### 完了済み
 
 - [x] モノレポ化されている (`games/` と `portal/` が存在)
 - [x] Game #1 (`games/ntiktaktoe/`) が分離済み
 - [x] `games/_template/` が存在し、量産の土台がある
-- [x] Game #2〜#4 相当の実装ディレクトリが存在 (`flashreflex`, `gravityfour`, `memoryduel`)
-- [x] `portal/src/data/games.json` によるメタデータ管理基盤がある
+- [x] Game #2〜#14 実装完了（flashreflex/gravityfour/memoryduel/snakechaos/merge2048/brickblast/molemania/colorburst/taptarget/simonecho/numhunt/dodgeblitz/typingblitz）
+- [x] `portal/src/data/games.json` によるメタデータ管理基盤がある（14本登録済み）
+- [x] 各ゲームの本番URLが揃っているか確認 (確定ドメイン: `https://game.kihamda.net/`)
+- [x] `portal/` 本番公開の確認 (`https://game.kihamda.net/` 到達確認済み)
+- [x] 全ゲームで `lint` と `build` がグリーンか横断確認
+- [x] 全ゲームにドーパミン強化演出（パーティクル/コンボ/ポップアップ/シェイク/WebAudio）追加
 
 ### 未完了 / 要確認
 

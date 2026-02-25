@@ -169,3 +169,185 @@ h1 {
     font-size: 26px;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ドーパミン強化エフェクト
+───────────────────────────────────────────────────────────────────────────── */
+
+/* カード相対配置（パーティクル用） */
+.card {
+  position: relative;
+  overflow: visible;
+}
+
+/* ── パーティクルバースト ────────────────────────────────────────────────── */
+.particleBurst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: particleScatter 0.65s ease-out forwards;
+}
+
+.particle.p0 { background: #facc15; --dx: 0px;   --dy: -40px; }
+.particle.p1 { background: #38bdf8; --dx: 28px;  --dy: -28px; }
+.particle.p2 { background: #f87171; --dx: 40px;  --dy: 0px;   }
+.particle.p3 { background: #4ade80; --dx: 28px;  --dy: 28px;  }
+.particle.p4 { background: #c084fc; --dx: 0px;   --dy: 40px;  }
+.particle.p5 { background: #fb923c; --dx: -28px; --dy: 28px;  }
+.particle.p6 { background: #facc15; --dx: -40px; --dy: 0px;   }
+.particle.p7 { background: #38bdf8; --dx: -28px; --dy: -28px; }
+
+@keyframes particleScatter {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+}
+
+/* ── MATCH ポップアップ ──────────────────────────────────────────────────── */
+.scoreCard {
+  position: relative;
+}
+
+.matchPopup {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 800;
+  color: #facc15;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+  pointer-events: none;
+  animation: matchPopAnim 1.2s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes matchPopAnim {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0);    }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(-4px);  }
+  60%  { opacity: 1; transform: translateX(-50%) translateY(-18px); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+}
+
+/* ── コンボ表示 ─────────────────────────────────────────────────────────── */
+.comboDisplay {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: #38bdf8;
+  margin: 4px 0 8px;
+  letter-spacing: 1px;
+  animation: comboPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.comboDisplay.onFire {
+  color: #fb923c;
+  text-shadow: 0 0 12px rgba(251, 146, 60, 0.7);
+}
+
+.fireLabel {
+  margin-right: 4px;
+}
+
+@keyframes comboPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ── 画面シェイク ────────────────────────────────────────────────────────── */
+@keyframes shakeAnim {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-8px) rotate(-1deg); }
+  30%  { transform: translateX(7px) rotate(1deg); }
+  45%  { transform: translateX(-5px) rotate(-0.5deg); }
+  60%  { transform: translateX(4px) rotate(0.5deg); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes clearShakeAnim {
+  0%   { transform: translateX(0) scale(1); }
+  20%  { transform: translateX(-4px) scale(1.01); }
+  40%  { transform: translateX(4px) scale(1.01); }
+  60%  { transform: translateX(-3px) scale(1); }
+  80%  { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+.app.shake {
+  animation: shakeAnim 0.45s ease-out;
+}
+
+.app.clearShake {
+  animation: clearShakeAnim 0.55s ease-out;
+}
+
+/* ── コンフェッティ ──────────────────────────────────────────────────────── */
+.confettiOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: -12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── 勝者ポップアップ ────────────────────────────────────────────────────── */
+.winnerPopup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(3, 7, 18, 0.72);
+  z-index: 200;
+  cursor: pointer;
+  animation: winnerPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.winnerIcon {
+  font-size: 64px;
+}
+
+.winnerText {
+  font-size: 32px;
+  font-weight: 900;
+  color: #facc15;
+  text-shadow: 0 0 24px rgba(250, 204, 21, 0.6);
+}
+
+.winnerSub {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+@keyframes winnerPopIn {
+  0%   { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}

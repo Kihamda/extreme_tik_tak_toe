@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.game-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  display: block;
+  cursor: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.overlay.interactive {
+  pointer-events: auto;
+}
+
+.overlay h1 {
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 0 20px #fff,
+    0 0 40px #7af,
+    0 0 80px #7af;
+  letter-spacing: 0.1em;
+}
+
+.overlay .subtitle {
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  color: #7af;
+  letter-spacing: 0.15em;
+}
+
+.overlay .score-display {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: #fff;
+}
+
+.overlay .score-display span {
+  color: #ff0;
+}
+
+.overlay .hi-score {
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  color: #888;
+}
+
+.overlay .hi-score span {
+  color: #f80;
+}
+
+.start-btn {
+  margin-top: 8px;
+  padding: 12px 48px;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #000;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
+  box-shadow: 0 0 20px #fff8, 0 0 40px #7af4;
+}
+
+.start-btn:hover {
+  background: #7af;
+  box-shadow: 0 0 30px #7aff, 0 0 60px #7af8;
+}
+
+.how-to {
+  font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+  color: #555;
+  text-align: center;
+  line-height: 1.8;
+  max-width: 480px;
+}

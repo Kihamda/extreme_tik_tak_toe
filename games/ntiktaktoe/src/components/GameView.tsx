@@ -1,5 +1,10 @@
 import type { Board, GameSettings, PendingMove } from "../lib/types";
 
+interface CellPosition {
+  row: number;
+  col: number;
+}
+
 interface GameViewProps {
   board: Board;
   gameSettings: GameSettings;
@@ -7,11 +12,54 @@ interface GameViewProps {
   currentPlayerIndex: number;
   nextPlayerIndex: number | null;
   isTransitioning: boolean;
+  lastPlacedCell: CellPosition | null;
+  isWinAnimation: boolean;
+  victoryMessage: string | null;
+  isDraw: boolean;
+  streak: number;
+  moveCount: number;
   onCellClick: (row: number, col: number) => void;
   onConfirmMove: (row: number, col: number) => void;
   onCancelPendingMove: () => void;
   onReset: () => void;
 }
+
+// Pre-computed particle directions (angle in degrees → unit vector)
+const PARTICLE_ANGLES_6 = [0, 60, 120, 180, 240, 300];
+const PARTICLE_ANGLES_8 = [0, 45, 90, 135, 180, 225, 270, 315];
+const toVec = (deg: number) => ({
+  x: Math.round(Math.cos((deg * Math.PI) / 180) * 100) / 100,
+  y: Math.round(Math.sin((deg * Math.PI) / 180) * 100) / 100,
+});
+
+interface ParticlesProps {
+  isWin: boolean;
+  color: string;
+  animKey: number;
+}
+
+const Particles = ({ isWin, color, animKey }: ParticlesProps) => {
+  const angles = isWin ? PARTICLE_ANGLES_8 : PARTICLE_ANGLES_6;
+  const distance = isWin ? 64 : 36;
+  return (
+    <div className={`particles ${isWin ? "particles--win" : "particles--place"}`} key={animKey}>
+      {angles.map((angle, i) => {
+        const { x, y } = toVec(angle);
+        return (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              "--tx": `${Math.round(x * distance)}px`,
+              "--ty": `${Math.round(y * distance)}px`,
+              "--color": color,
+            } as React.CSSProperties}
+          />
+        );
+      })}
+    </div>
+  );
+};
 
 const GameView = ({
   board,
@@ -20,6 +68,12 @@ const GameView = ({
   currentPlayerIndex,
   nextPlayerIndex,
   isTransitioning,
+  lastPlacedCell,
+  isWinAnimation,
+  victoryMessage,
+  isDraw,
+  streak,
+  moveCount,
   onCellClick,
   onConfirmMove,
   onCancelPendingMove,
@@ -29,7 +83,21 @@ const GameView = ({
   const pendingMark = currentPlayer?.mark;
 
   return (
-    <div className="game">
+    <div className={`game${isWinAnimation ? " game--shake" : ""}`}>
+      {/* Victory / Draw popup */}
+      {victoryMessage && (
+        <div className={`victory-popup${isDraw ? " victory-popup--draw" : ""}`}>
+          <span>{victoryMessage}</span>
+        </div>
+      )}
+
+      {/* Streak badge */}
+      {streak >= 2 && (
+        <div className="streak-badge">
+          🔥 {streak}連勝中！
+        </div>
+      )}
+
       {isTransitioning && nextPlayerIndex !== null && (
         <div className="transition-overlay">
           <div className="next-player-display">
@@ -138,6 +206,9 @@ const GameView = ({
                 : undefined;
             const isPending =
               pendingMove?.row === rowIndex && pendingMove?.col === colIndex;
+            const isLastPlaced =
+              lastPlacedCell?.row === rowIndex &&
+              lastPlacedCell?.col === colIndex;
 
             return (
               <div
@@ -160,6 +231,15 @@ const GameView = ({
                 onClick={() => onCellClick(rowIndex, colIndex)}
               >
                 {isPending ? pendingMark : cell}
+
+                {/* Particles on place or win */}
+                {isLastPlaced && (
+                  <Particles
+                    isWin={isWinAnimation}
+                    color={cellColor ?? currentPlayer?.color ?? "#7986cb"}
+                    animKey={moveCount}
+                  />
+                )}
               </div>
             );
           }),

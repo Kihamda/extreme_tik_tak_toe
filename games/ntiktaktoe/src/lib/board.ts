@@ -8,6 +8,9 @@ export const createEmptyBoard = (settings: GameSettings): Board => {
 
 export const cloneBoard = (board: Board): Board => board.map((row) => [...row]);
 
+export const isBoardFull = (board: Board): boolean =>
+  board.every((row) => row.every((cell) => cell !== null));
+
 export const resolveMovePosition = (
   board: Board,
   row: number,

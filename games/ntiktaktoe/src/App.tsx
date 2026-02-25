@@ -17,6 +17,7 @@ import {
   cloneBoard,
   checkWin,
   resolveMovePosition,
+  isBoardFull,
 } from "./lib/board";
 import {
   addPlayerToSettings,
@@ -25,12 +26,45 @@ import {
   updatePlayerMark,
   updatePlayerColor,
 } from "./lib/players";
+import { playPlopSound, playVictorySound, playDrawSound } from "./lib/audio";
+import { STREAK_KEY } from "./lib/constants";
 import type {
   Board,
   GameSettings,
   PendingMove,
   PersistedState,
 } from "./lib/types";
+
+// ---- streak helpers -------------------------------------------------------
+interface StreakData {
+  count: number;
+  configHash: string;
+}
+
+const computeConfigHash = (settings: GameSettings): string =>
+  settings.players.map((p) => p.name).join("|");
+
+const loadStreak = (configHash: string): number => {
+  try {
+    const saved = localStorage.getItem(STREAK_KEY);
+    if (saved) {
+      const data = JSON.parse(saved) as StreakData;
+      if (data.configHash === configHash) return data.count;
+    }
+  } catch {
+    // ignore
+  }
+  return 0;
+};
+
+const saveStreak = (count: number, configHash: string): void => {
+  try {
+    localStorage.setItem(STREAK_KEY, JSON.stringify({ count, configHash }));
+  } catch {
+    // ignore
+  }
+};
+// ---------------------------------------------------------------------------
 
 function App() {
   const initialSavedState = useMemo(() => loadGameState(), []);
@@ -60,6 +94,18 @@ function App() {
   const [confirmationMode, setConfirmationMode] = useState(
     initialDevicePrefs.confirmationMode,
   );
+
+  // ---- effect states -------------------------------------------------------
+  const [lastPlacedCell, setLastPlacedCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+  const [isWinAnimation, setIsWinAnimation] = useState(false);
+  const [victoryMessage, setVictoryMessage] = useState<string | null>(null);
+  const [isDraw, setIsDraw] = useState(false);
+  const [moveCount, setMoveCount] = useState(0);
+  const [streak, setStreak] = useState(0);
+  // --------------------------------------------------------------------------
 
   const savedSnapshot = useMemo<Partial<PersistedState> | null>(() => {
     if (appState === "before") {
@@ -103,11 +149,18 @@ function App() {
 
   const initializeGame = () => {
     const clonedSettings = cloneGameSettings(newGameSettings);
+    const configHash = computeConfigHash(clonedSettings);
     setCurrentGameSettings(clonedSettings);
     setBoard(createEmptyBoard(clonedSettings));
     setCurrentPlayerIndex(0);
     setWinner(null);
     setPendingMove(null);
+    setLastPlacedCell(null);
+    setIsWinAnimation(false);
+    setVictoryMessage(null);
+    setIsDraw(false);
+    setMoveCount(0);
+    setStreak(loadStreak(configHash));
     setAppState("in_progress");
   };
 
@@ -138,12 +191,37 @@ function App() {
     newBoard[row][col] = currentPlayer.mark;
     setBoard(newBoard);
     setPendingMove(null);
+    setLastPlacedCell({ row, col });
+    setMoveCount((c) => c + 1);
+    playPlopSound();
 
     if (checkWin(newBoard, row, col, currentPlayer.mark, currentGameSettings)) {
+      const configHash = computeConfigHash(currentGameSettings);
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      saveStreak(newStreak, configHash);
+      setIsWinAnimation(true);
+      setVictoryMessage(`🎉 ${currentPlayer.name} の勝利！`);
+      playVictorySound();
       setTimeout(() => {
         setWinner(currentPlayer.name);
         setAppState("after");
-      }, 300);
+        setIsWinAnimation(false);
+        setVictoryMessage(null);
+      }, 2500);
+    } else if (isBoardFull(newBoard)) {
+      const configHash = computeConfigHash(currentGameSettings);
+      saveStreak(0, configHash);
+      setStreak(0);
+      setIsDraw(true);
+      setVictoryMessage("引き分け！");
+      playDrawSound();
+      setTimeout(() => {
+        setWinner(null);
+        setAppState("after");
+        setIsDraw(false);
+        setVictoryMessage(null);
+      }, 2500);
     } else {
       const nextIndex =
         (currentPlayerIndex + 1) % currentGameSettings.players.length;
@@ -186,6 +264,10 @@ function App() {
     setPendingMove(null);
     setIsTransitioning(false);
     setNextPlayerIndex(null);
+    setLastPlacedCell(null);
+    setIsWinAnimation(false);
+    setVictoryMessage(null);
+    setIsDraw(false);
   };
 
   const handleResumeGame = () => {
@@ -227,6 +309,12 @@ function App() {
           currentPlayerIndex={currentPlayerIndex}
           nextPlayerIndex={nextPlayerIndex}
           isTransitioning={isTransitioning}
+          lastPlacedCell={lastPlacedCell}
+          isWinAnimation={isWinAnimation}
+          victoryMessage={victoryMessage}
+          isDraw={isDraw}
+          streak={streak}
+          moveCount={moveCount}
           onCellClick={handleCellClick}
           onConfirmMove={confirmMove}
           onCancelPendingMove={cancelMove}

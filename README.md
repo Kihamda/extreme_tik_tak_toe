@@ -1,17 +1,53 @@
 # extreme_tik_tok_toe platform
 
-このリポジトリはゲームプラットフォームのモノレポ構成
+ブラウザゲームプラットフォームのモノレポ。全ゲームを1リポジトリで管理し、Vercel にデプロイする。
+
+**Portal**: https://game.kihamda.net/
+
+## ゲームラインナップ (14本)
+
+| ID | タイトル | ジャンル |
+|---|---|---|
+| `ntiktaktoe` | n目並べ | ストラテジー/多人数 |
+| `flashreflex` | Flash Reflex | 反射神経 |
+| `gravityfour` | Gravity Four | ボード/2人対戦 |
+| `memoryduel` | Memory Duel | 記憶/2人対戦 |
+| `snakechaos` | Snake Chaos | アーケード |
+| `merge2048` | Merge 2048 | パズル |
+| `brickblast` | Brick Blast | アーケード |
+| `molemania` | Mole Mania | アーケード |
+| `colorburst` | Color Burst | 反射神経/パズル |
+| `taptarget` | Tap Target | 反射神経 |
+| `simonecho` | Simon Echo | 記憶 |
+| `numhunt` | Num Hunt | 反射神経 |
+| `dodgeblitz` | Dodge Blitz | アーケード |
+| `typingblitz` | Typing Blitz | タイピング |
 
 ## 構成
 
-- `games/ntiktaktoe/` 既存の React + Vite ゲーム
-- `games/_template/` 新ゲーム追加テンプレート
-- `portal/` Astro SSG のゲーム一覧ポータル
-- `scripts/build-all.sh` platform 全体ビルド
+```
+extreme_tik_tok_toe/
+  games/
+    ntiktaktoe/    ← Game #1
+    flashreflex/   ← Game #2
+    gravityfour/   ← Game #3
+    memoryduel/    ← Game #4
+    snakechaos/    ← Game #5
+    merge2048/     ← Game #6
+    brickblast/    ← Game #7
+    molemania/     ← Game #8
+    colorburst/    ← Game #9
+    taptarget/     ← Game #10
+    simonecho/     ← Game #11
+    numhunt/       ← Game #12
+    dodgeblitz/    ← Game #13
+    typingblitz/   ← Game #14
+    _template/     ← 新ゲーム量産テンプレート
+  portal/          ← Astro SSG ゲーム一覧ポータル
+  scripts/         ← 一括ビルドスクリプト
+```
 
 ## セットアップ
-
-ルートで依存関係をインストール
 
 ```bash
 npm install
