@@ -5,10 +5,65 @@
 
 ---
 
-## 2026-02-24
+## 2026-02-25
 
 ### 作業ログ
 
+- [開始] Day4〜Day7 一括実行（gravityfour/memoryduel lint+build → portal導線 → GA4導入） → 担当: gamedev / platform-architect
+- [完了] Day4 `games/gravityfour` lint/build → 結果: 成功（修正不要。最初からグリーン）
+- [完了] Day5 `games/memoryduel` lint/build → 結果: 成功（修正不要。最初からグリーン）
+- [完了] Day6 `portal` 導線確認・カード改善 → 結果: 成功（カード全面オーバーレイリンク追加、games.jsonのpathを絶対URLに更新、build 5pages 成功）
+- [完了] Day7 GA4 `G-L7TY3RFZB7` を portal + 全4ゲームへ導入 → 結果: 成功（Layout.astro + 各index.html の </head> 直前に追加、portal build 成功）
+
+### 今日の成果
+
+- Day4〜Day7 全タスク完了
+- `gravityfour` / `memoryduel` は lint/build ともにグリーン（修正不要）
+- portal ゲームカードを1クリックで各ゲームへ遷移できる構造に改善
+- GA4（G-L7TY3RFZB7）を portal + 全4ゲームに導入完了
+
+### 明日やること
+
+- Day8: Search Console 登録と sitemap 送信
+- Day9: AdSense 申請状態確認と不足修正
+
+---
+
+## 2026-02-24 (Day 2)
+
+### 作業ログ
+
+- [完了] Day3 `games/flashreflex` lint/build 確認・修正 → 結果: 成功（修正不要。最初からlint 0件 / build成功）
+- [メモ] `games/flashreflex` は lint エラー 0件、build（tsc + vite）も完全通過。Day3 タスク完了
+- [開始] Day3 `games/flashreflex` lint/build 確認・修正 → 担当: gamedev
+- [開始] Day2 `games/ntiktaktoe` lint/build 確認・修正 → 担当: gamedev
+- [完了] Day2 `games/ntiktaktoe` lint/build 確認・修正 → 結果: 成功（修正不要。最初からlint 0件 / build成功）
+- [メモ] `games/ntiktaktoe` は lint エラー 0件、build（tsc + vite）も完全通過。Day2 タスク完了
+
+- 16:08 [開始] 実ドメイン確定情報の反映（URL台帳とROADMAP更新） → 担当: consultant（platform-architect / growth に順次委譲）
+- 16:10 [完了] 実ドメイン確定情報の反映（URL台帳とROADMAP更新） → 結果: 成功（`https://game.kihamda.net/` で棚卸し確定）
+- 16:10 [メモ] `ROADMAP.md` の「本番URL確認」「portal本番公開確認」を完了化し Day1完了補足を追加
+- 16:08 [メモ] 実ドメイン確定: `https://game.kihamda.net/`（トップ・各ゲーム到達確認済み）
+  - portal: https://game.kihamda.net/
+  - ntiktaktoe: https://game.kihamda.net/games/ntiktaktoe/
+  - flashreflex: https://game.kihamda.net/games/flashreflex/
+  - gravityfour: https://game.kihamda.net/games/gravityfour/
+  - memoryduel: https://game.kihamda.net/games/memoryduel/
+- 11:55 [開始] Day1 全ゲーム現行URL棚卸し（portal含む） → 担当: consultant（platform-architect に委譲）
+- 11:57 [完了] Day1 全ゲーム現行URL棚卸し（portal含む） → 結果: 成功（URL一覧を事実ベースで記録）
+- 11:57 [メモ] 公開ドメインはリポジトリ内で未確定のため、現時点はパス確定で棚卸し
+  - portal: 未確定（パス `/`）
+  - ntiktaktoe: 未確定（パス `/games/ntiktaktoe/`）
+  - flashreflex: 未確定（パス `/games/flashreflex/`）
+  - gravityfour: 未確定（パス `/games/gravityfour/`）
+  - memoryduel: 未確定（パス `/games/memoryduel/`）
+  - 根拠: `portal/src/data/games.json` と各 `games/*/vite.config.ts` の `base` 一致
+- 11:50 [開始] ROADMAP の成長戦略強化（実戦運用化） → 担当: consultant（growth に委譲予定）
+- 11:53 [完了] ROADMAP の成長戦略強化（実戦運用化） → 結果: 成功（現在地/14日スプリント/KPI分離/Not-To-Do/週次運用/フェーズ移行ゲートを追加）
+- 11:53 [メモ] 抽象論を削減し、日次で動ける実行計画に再編。Phase 0 は実績ベースでチェック更新
+- 10:59 [開始] 今後の成長に必要な施策提案 → 担当: consultant（growth に委譲）
+- 10:59 [完了] 今後の成長に必要な施策提案 → 結果: 成功（2週間/1〜3ヶ月の優先施策 KPI 週次運用まで提示）
+- 10:59 [メモ] 計測基盤（GA4/Search Console）と回遊導線を先に固める方針で提案を統合
 - 03:55 [開始] memoryduel の react-hooks/set-state-in-effect lint修正 → 担当: consultant（gamedev / qa-tester に順次委譲）
 - 03:57 [完了] memoryduel の react-hooks/set-state-in-effect lint修正 → 結果: 成功（effect内の同期setStateを導出状態へ移行して解消）
 - 03:57 [メモ] `games/memoryduel/src/App.tsx` の `setOpened([])` / `setPhase("finished")` 起因lintを解消し、Problemsでエラー0を確認
