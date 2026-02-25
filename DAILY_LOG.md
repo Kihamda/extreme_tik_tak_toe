@@ -9,6 +9,14 @@
 
 ### 作業ログ
 
+- [完了] 新規ゲーム10本量産 → 結果: 成功（snakechaos/merge2048/brickblast/molemania/colorburst/taptarget/simonecho/numhunt/dodgeblitz/typingblitz 全lint+buildグリーン）
+- [完了] 既存4本ドーパミン強化 → 結果: 成功（ntiktaktoe/flashreflex/gravityfour/memoryduel にパーティクル/コンボ/ポップアップ/シェイク/WebAudio追加、全lint+buildグリーン）
+- [完了] portal games.json 14本登録 + ビルド確認 → 結果: 成功（15ページ生成、707ms）
+- [完了] 新規10本サムネイル作成 → 結果: 成功（snakechaos/merge2048/brickblast/molemania/colorburst/taptarget/simonecho/numhunt/dodgeblitz/typingblitz の SVG 生成）
+- [完了] @astrojs/sitemap 導入 + astro.config.mjs に site URL 設定 → 結果: 成功（sitemap-index.xml 生成確認）
+- [完了] README.md 更新 → 結果: 成功（14本ゲーム一覧・新構成反映）
+- [完了] portal 最終ビルド → 結果: 成功（15ページ + sitemap-index.xml 生成、577ms）
+- [開始] 新規ゲーム10本量産 + 既存4本ドーパミン強化 → 担当: game-factory × 5 / gamedev × 4
 - [開始] Day4〜Day7 一括実行（gravityfour/memoryduel lint+build → portal導線 → GA4導入） → 担当: gamedev / platform-architect
 - [完了] Day4 `games/gravityfour` lint/build → 結果: 成功（修正不要。最初からグリーン）
 - [完了] Day5 `games/memoryduel` lint/build → 結果: 成功（修正不要。最初からグリーン）
@@ -17,6 +25,9 @@
 
 ### 今日の成果
 
+- 新規ゲーム10本追加（全lint/buildグリーン）
+- 既存4本にドーパミン強化演出を全追加
+- portal に14本登録、サムネイル14本揃い、sitemap生成、portal ビルド全通過
 - Day4〜Day7 全タスク完了
 - `gravityfour` / `memoryduel` は lint/build ともにグリーン（修正不要）
 - portal ゲームカードを1クリックで各ゲームへ遷移できる構造に改善
@@ -24,8 +35,9 @@
 
 ### 明日やること
 
-- Day8: Search Console 登録と sitemap 送信
-- Day9: AdSense 申請状態確認と不足修正
+- **PR作成 → main マージ → デプロイ**（人間側監査フロー）
+- Day8: Search Console に `sitemap-index.xml` を送信（https://game.kihamda.net/sitemap-index.xml）
+- Day9: AdSense 申請状態確認
 
 ---
 

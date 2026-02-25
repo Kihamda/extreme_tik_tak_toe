@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 type Player = "red" | "yellow";
@@ -30,6 +30,62 @@ const DIRECTIONS = [
   { dr: 1, dc: 1 },
   { dr: 1, dc: -1 },
 ] as const;
+
+// ---- Audio helpers ----
+let _audioCtx: AudioContext | null = null;
+const getAudioCtx = (): AudioContext => {
+  if (!_audioCtx) _audioCtx = new AudioContext();
+  if (_audioCtx.state === "suspended") void _audioCtx.resume();
+  return _audioCtx;
+};
+
+const playDropSound = () => {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(120, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.4, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.15);
+};
+
+const playWinSound = () => {
+  const ctx = getAudioCtx();
+  const notes = [440, 554, 659, 880];
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "triangle";
+    const start = ctx.currentTime + i * 0.13;
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.3, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+    osc.start(start);
+    osc.stop(start + 0.24);
+  });
+};
+
+const playDrawSound = () => {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = "square";
+  osc.frequency.setValueAtTime(220, ctx.currentTime);
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.52);
+};
+// ---- End Audio helpers ----
 
 const createEmptyBoard = (): Cell[][] =>
   Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
@@ -98,7 +154,28 @@ const App = () => {
   const [moves, setMoves] = useState(0);
   const [winLine, setWinLine] = useState<WinLineCell[]>([]);
 
+  // Effect states
+  const [landingKey, setLandingKey] = useState<string | null>(null);
+  const [shaking, setShaking] = useState(false);
+  const [popup, setPopup] = useState<string | null>(null);
+  const [consecutiveWins, setConsecutiveWins] = useState<number>(() => {
+    const s = localStorage.getItem("gf_streak");
+    return s !== null ? parseInt(s, 10) : 0;
+  });
+
   const isDraw = phase === "finished" && winner === null;
+
+  useEffect(() => {
+    if (!landingKey) return;
+    const t = setTimeout(() => setLandingKey(null), 600);
+    return () => clearTimeout(t);
+  }, [landingKey]);
+
+  useEffect(() => {
+    if (!popup) return;
+    const t = setTimeout(() => setPopup(null), 2800);
+    return () => clearTimeout(t);
+  }, [popup]);
 
   const winCellSet = useMemo(() => {
     return new Set(winLine.map((cell) => `${cell.row}-${cell.col}`));
@@ -119,6 +196,9 @@ const App = () => {
     const row = getDropRow(board, col);
     if (row === null) return;
 
+    playDropSound();
+    setLandingKey(`${row}-${col}`);
+
     const nextBoard = board.map((line) => [...line]);
     nextBoard[row][col] = currentPlayer;
 
@@ -132,6 +212,16 @@ const App = () => {
       setWinner(currentPlayer);
       setWinLine(line);
       setPhase("finished");
+
+      const newStreak = consecutiveWins + 1;
+      setConsecutiveWins(newStreak);
+      localStorage.setItem("gf_streak", String(newStreak));
+
+      setTimeout(() => {
+        playWinSound();
+        setShaking(true);
+        setPopup(`🎉 ${PLAYER_LABEL[currentPlayer]} の勝利！`);
+      }, 120);
       return;
     }
 
@@ -139,6 +229,15 @@ const App = () => {
       setWinner(null);
       setWinLine([]);
       setPhase("finished");
+
+      setConsecutiveWins(0);
+      localStorage.setItem("gf_streak", "0");
+
+      setTimeout(() => {
+        playDrawSound();
+        setShaking(true);
+        setPopup("引き分け！");
+      }, 120);
       return;
     }
 
@@ -147,9 +246,22 @@ const App = () => {
 
   return (
     <main className="app">
-      <section className="panel">
+      <section
+        className={`panel${shaking ? " shake" : ""}`}
+        onAnimationEnd={(e) => {
+          if (e.animationName === "shake") setShaking(false);
+        }}
+      >
         <h1>Gravity Four</h1>
         <p className="subtitle">ローカル2人で遊ぶ重力四目並べ</p>
+
+        {consecutiveWins >= 2 && (
+          <div className="combo-badge">🔥 {consecutiveWins}連勝中！</div>
+        )}
+
+        {popup && (
+          <div key={popup} className="win-popup">{popup}</div>
+        )}
 
         <div className="ruleBox">
           <h2>ルール</h2>
@@ -214,9 +326,14 @@ const App = () => {
                   return (
                     <div
                       key={key}
-                      className={`cell ${cell ? PLAYER_COLOR_CLASS[cell] : "empty"} ${
-                        isWinningCell ? "winning" : ""
-                      }`}
+                      className={[
+                        "cell",
+                        cell ? PLAYER_COLOR_CLASS[cell] : "empty",
+                        isWinningCell ? "winning" : "",
+                        landingKey === key ? "land-anim" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                     >
                       <span className="piece" />
                     </div>

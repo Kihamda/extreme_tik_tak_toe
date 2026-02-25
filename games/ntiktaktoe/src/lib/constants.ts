@@ -26,3 +26,4 @@ export const DEFAULT_MARKS = [
 
 export const STORAGE_KEY = "extreme_tik_tok_toe_save";
 export const DEVICE_PREFS_KEY = "extreme_tik_tok_toe_device_prefs";
+export const STREAK_KEY = "ntiktaktoe_streak_v1";
