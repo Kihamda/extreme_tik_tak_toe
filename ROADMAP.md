@@ -13,14 +13,11 @@
 ```
 extreme_tik_tok_toe/  (← このリポジトリのみ使用)
   games/
-    ntiktaktoe/       ← Game #1 (現在の src/ を移動)
-      src/
-      vite.config.ts
-      index.html
-      ...
-    game-02/          ← Game #2 (新規追加)
-    game-03/          ← Game #3
-    game-N/
+    ntiktaktoe/       ← Game #1
+    flashreflex/      ← Game #2
+    gravityfour/      ← Game #3
+    memoryduel/       ← Game #4
+    _template/
   portal/             ← ゲーム一覧サイト (Astro)
     src/
       data/games.json ← ゲームメタデータ一元管理
@@ -33,6 +30,32 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - 各ゲームは Vercel の**個別プロジェクト**として独立してデプロイ (1リポジトリ複数プロジェクト対応)
 - `portal/` もVercel に別プロジェクトとしてデプロイ
 - **プラットフォームが育つほど新作の初速が上がる** (既存ユーザーへの告知 + SEO 内部リンク効果)
+
+---
+
+## 現在地 (2026-02-24 時点)
+
+### 完了済み
+
+- [x] モノレポ化されている (`games/` と `portal/` が存在)
+- [x] Game #1 (`games/ntiktaktoe/`) が分離済み
+- [x] `games/_template/` が存在し、量産の土台がある
+- [x] Game #2〜#4 相当の実装ディレクトリが存在 (`flashreflex`, `gravityfour`, `memoryduel`)
+- [x] `portal/src/data/games.json` によるメタデータ管理基盤がある
+
+### 未完了 / 要確認
+
+- [x] 各ゲームの本番URLが揃っているか確認 (確定ドメイン: `https://game.kihamda.net/`)
+- [x] `portal/` 本番公開の確認 (`https://game.kihamda.net/` 到達確認済み)
+- [x] 全ゲームで `lint` と `build` がグリーンか横断確認
+- [ ] Search Console と GA4 の導入完了確認
+- [ ] AdSense 審査の申請・設置状態の確認
+
+### ボトルネック
+
+1. 公開済みかどうかの可視化が弱い
+2. 日次の実行リストがなく、優先順位が流れやすい
+3. KPI が1枚で見えず、次フェーズに進む判定が曖昧
 
 ---
 
@@ -52,6 +75,40 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 ---
 
+## 直近14日スプリント (実行優先)
+
+方針: 「公開導線を整える」「計測を入れる」「5本目を出す」の3本柱だけやる。
+
+### 優先度
+
+- **P0 (最優先)**: 公開状態の確定、計測導入、ポータル導線
+- **P1**: 5本目の企画〜着手、SEO最低限
+- **P2**: 自動化の下準備
+
+### Day 1-14 実行メニュー
+
+| 日     | 優先 | やること                                     | 完了条件                        |
+| ------ | ---- | -------------------------------------------- | ------------------------------- |
+| Day 1  | P0   | 全ゲームの現行URL棚卸し (`portal` 含む)      | `DAILY_LOG.md` にURL一覧がある  |
+| Day 2  | P0   | `games/ntiktaktoe` の lint/build 修正        | `lint`/`build` 緑 ✅            |
+| Day 3  | P0   | `flashreflex` の lint/build 修正             | `lint`/`build` 緑 ✅            |
+| Day 4  | P0   | `gravityfour` の lint/build 修正             | `lint`/`build` 緑 ✅            |
+| Day 5  | P0   | `memoryduel` の lint/build 修正              | `lint`/`build` 緑 ✅            |
+| Day 6  | P0   | `portal` の導線確認とカード改善              | 各ゲームへ1クリック遷移 ✅      |
+| Day 7  | P0   | GA4 を `portal` + 全ゲームへ導入             | Realtime でアクセス確認 ✅      |
+| Day 8  | P1   | Search Console 登録と sitemap 送信           | インデックス送信済み            |
+| Day 9  | P1   | AdSense 申請状態確認と不足修正               | 申請中または再申請完了          |
+| Day 10 | P1   | Game #5 企画決定 (1ページ企画書)             | タイトル/ルール/差別化確定      |
+| Day 11 | P1   | Game #5 雛形作成 (`games/_template/` から)   | 初回コミット完了                |
+| Day 12 | P1   | Game #5 MVP 実装                             | プレイ可能                      |
+| Day 13 | P1   | Game #5 SEO最低限 (title/description/OGP)    | メタ反映確認                    |
+| Day 14 | P0   | `portal/src/data/games.json` 反映 + 公開判定 | ポータル掲載 + 週次レビュー実施 |
+
+補足: Day 1 の URL 棚卸しは 2026-02-24 時点で完了条件を満たしている。
+確認済み: `https://game.kihamda.net/` / `https://game.kihamda.net/games/ntiktaktoe/` / `https://game.kihamda.net/games/flashreflex/` / `https://game.kihamda.net/games/gravityfour/` / `https://game.kihamda.net/games/memoryduel/`
+
+---
+
 ## Phase 0 ── 今週「Game #1 を公開 + プラットフォームを設計する」
 
 目標: n目並べを公開し、プラットフォームの土台を作る
@@ -67,13 +124,22 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 **モノレポへのリストラクチャ**
 
-- [ ] `src/` → `games/ntiktaktoe/src/` に移動、ルートの `vite.config.ts` も移動
+- [x] `src/` → `games/ntiktaktoe/src/` に移動、ルートの `vite.config.ts` も移動
 - [ ] `games/ntiktaktoe/` を Vercel プロジェクトとして設定 (Root Directory: `games/ntiktaktoe`)
-- [ ] `portal/` ディレクトリを作成 (Astro)
-- [ ] `portal/src/data/games.json` でゲームメタデータを一元管理
-- [ ] Game #2 の企画を決定
+- [x] `portal/` ディレクトリを作成 (Astro)
+- [x] `portal/src/data/games.json` でゲームメタデータを一元管理
+- [x] Game #2 の企画を決定
 
 **Copilot 活用**: `/pwa`・`/seo` プロンプトを使う、`/platform-setup` でポータル構築
+
+### Phase 0 移行ゲート
+
+以下を**全て**満たしたら Phase 1 へ進む。
+
+- `ntiktaktoe` が本番URLでプレイ可能
+- `portal` から Game #1 へ1クリック遷移できる
+- `portal` と Game #1 の GA4 Realtime 計測が確認できる
+- Search Console でプロパティ登録済み
 
 ---
 
@@ -92,17 +158,35 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 **Copilot 活用**: `/platform-setup` でポータル構築、`/game-ideation` で企画生成、`/sns-automation` で投稿自動化
 
+### Phase 1 移行ゲート
+
+以下を**全て**満たしたら Phase 2 へ進む。
+
+- 公開ゲーム本数が5本以上
+- 4週移動平均で月間PV 10,000 以上ペース
+- 主要流入ページの離脱率改善施策を2回以上実施
+- SNS 自動投稿が最低1系統で稼働
+
 ---
 
 ## Phase 2 ── 3〜6ヶ月「量産体制の確立」
 
 目標: ゲーム15本・月5万PV・AdSense 収益開始
 
-- [ ] `games/` 配下にゲームを追加するテンプレート (`games/_template/`) を確立
+- [x] `games/` 配下にゲームを追加するテンプレート (`games/_template/`) を確立
 - [ ] 企画〜公開のリードタイムを1週間以内に短縮
 - [ ] SEO: 各ゲームページに攻略 Tips・ルール説明記事を付ける
 - [ ] 多言語対応 (EN 追加でグローバル流入)
 - [ ] 内部リンク戦略 (ゲーム間で相互誘導)
+
+### Phase 2 移行ゲート
+
+以下を**全て**満たしたら Phase 3 へ進む。
+
+- 公開ゲーム本数が15本以上
+- 月間PV 50,000 以上を2か月連続
+- 新規ゲームの公開リードタイム中央値 7日以内
+- AdSense 収益が月5,000円以上で安定
 
 ---
 
@@ -114,6 +198,15 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [ ] ゲームランキング・コメント機能 (Supabase 無料枠)
 - [ ] Reddit / Hacker News Show HN への投稿自動化
 
+### Phase 3 移行ゲート
+
+以下を**全て**満たしたら Phase 4 へ進む。
+
+- 公開ゲーム本数が30本以上
+- 月間PV 200,000 以上を2か月連続
+- 月間売上 50,000円以上を2か月連続
+- 上位3ゲーム依存率が全PVの70%未満
+
 ---
 
 ## Phase 4 ── 12〜24ヶ月「年収200万達成」
@@ -123,6 +216,59 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [ ] AI によるゲーム企画・コード生成の全自動化パイプライン構築
 - [ ] 人気ゲームの続編・バリエーション展開
 - [ ] YouTube / TikTok での自動動画投稿
+
+### Phase 4 到達判定
+
+- 公開ゲーム本数 60本以上
+- 月間PV 400,000 以上
+- 月間収益 170,000円以上を3か月連続
+
+---
+
+## KPI トラッカー (先行指標 / 結果指標)
+
+### 先行指標 (行動と仕組み)
+
+| 指標                            | 目安                   | 判定基準                               |
+| ------------------------------- | ---------------------- | -------------------------------------- |
+| 週あたり公開本数                | 0.25本以上 (月1本)     | 4週間で1本以上公開なら達成             |
+| 1本あたり制作リードタイム       | 14日以下 → 最終7日以下 | 直近5本の中央値で判定                  |
+| 計測導入率 (GA4/Search Console) | 100%                   | 公開中ゲーム全件で設定済み             |
+| 内部リンク整備率                | 100%                   | 各ゲームページに「次に遊ぶ」導線あり   |
+| 技術健全性                      | 継続                   | 主要ゲームで lint/build が週次グリーン |
+
+### 結果指標 (売上と集客)
+
+| 指標         | Ph.0 | Ph.1   | Ph.2    | Ph.3    | Ph.4      |
+| ------------ | ---- | ------ | ------- | ------- | --------- |
+| ゲーム本数   | 1    | 5      | 15      | 30      | 60        |
+| 月間PV       | -    | 10,000 | 50,000  | 200,000 | 400,000   |
+| AdSense 月収 | ¥0   | ¥4,000 | ¥20,000 | ¥80,000 | ¥160,000+ |
+
+---
+
+## 週次運用ループ (Mon-Sun)
+
+| 曜日 | やること                                      | 成果物                      |
+| ---- | --------------------------------------------- | --------------------------- |
+| Mon  | 先週KPIレビュー + 今週の1本化 (最重要1テーマ) | 週次方針1行 + 優先タスク3件 |
+| Tue  | 実装日 (機能追加/修正)                        | PRまたはコミット            |
+| Wed  | 実装日 (続き) + 軽い品質確認                  | 動作確認メモ                |
+| Thu  | 配信準備 (SEO/OGP/説明文/サムネ)              | 公開チェックリスト          |
+| Fri  | 公開または更新リリース                        | 公開URL + `games.json` 更新 |
+| Sat  | 集客運用 (SNS投稿/導線改善)                   | 投稿ログ                    |
+| Sun  | 週次ふりかえり + 次週バックログ整理           | `DAILY_LOG.md` 週報         |
+
+---
+
+## やらないこと (Not-To-Do)
+
+- 収益化前に大規模バックエンド開発を始めない
+- 見た目の全面リニューアルに週を溶かさない
+- 1本のゲームに2週間以上かけない
+- 解析なしで機能追加しない
+- 同時に複数チャネルへ手を広げすぎない
+- 完璧主義で公開を遅らせない
 
 ---
 
@@ -188,13 +334,3 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 | PWA 実装           | `.github/prompts/pwa.prompt.md`            |
 | SEO 対応           | `.github/prompts/seo.prompt.md`            |
 | SNS 自動化構築     | `.github/prompts/sns-automation.prompt.md` |
-
----
-
-## KPI トラッカー
-
-| 指標         | Ph.0 | Ph.1   | Ph.2    | Ph.3    | Ph.4      |
-| ------------ | ---- | ------ | ------- | ------- | --------- |
-| ゲーム本数   | 1    | 5      | 15      | 30      | 60        |
-| 月間PV       | -    | 10,000 | 50,000  | 200,000 | 400,000   |
-| AdSense 月収 | ¥0   | ¥4,000 | ¥20,000 | ¥80,000 | ¥160,000+ |

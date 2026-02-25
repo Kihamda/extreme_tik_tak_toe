@@ -3,8 +3,6 @@ name: CI — Lint & Build
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
   workflow_dispatch:
 
 # Cloudflare Pages が主デプロイ先。このワークフローは PR 段階の品質チェックのみ。

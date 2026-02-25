@@ -14,7 +14,14 @@ const { game, badge } = Astro.props as { game: Game; badge?: string };
 ---
 
 <article class="card">
-  <a href={`/games/${game.id}`} class="thumb-link" aria-label={`${game.title} の詳細へ`}>
+  {/* カード全体を覆うオーバーレイリンク（aria-hidden でスクリーンリーダー重複回避） */}
+  <a
+    href={game.path}
+    class="card-cover-link"
+    aria-hidden="true"
+    tabindex="-1"
+  ></a>
+  <a href={game.path} class="thumb-link" aria-label={`${game.title} をプレイする`}>
     <img src={game.thumbnail} alt={`${game.title} thumbnail`} loading="lazy" />
   </a>
   <div class="content">
@@ -27,7 +34,7 @@ const { game, badge } = Astro.props as { game: Game; badge?: string };
       {game.tags.map((tag) => <span>{tag}</span>)}
     </div>
     <div class="actions">
-      <a href={`/games/${game.id}`}>くわしく見る</a>
+      <a href={`/games/${game.id}`} class="details-link">くわしく見る</a>
       <a href={game.path} class="play">今すぐプレイ</a>
     </div>
   </div>
@@ -41,6 +48,14 @@ const { game, badge } = Astro.props as { game: Game; badge?: string };
     background: white;
     box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
     overflow: hidden;
+    position: relative;
+  }
+
+  .card-cover-link {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    z-index: 0;
   }
 
   .thumb-link {
@@ -108,6 +123,8 @@ const { game, badge } = Astro.props as { game: Game; badge?: string };
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
   }
 
   .actions a {
