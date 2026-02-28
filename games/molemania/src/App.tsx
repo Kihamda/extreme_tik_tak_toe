@@ -161,7 +161,9 @@ const App = () => {
   const startTimeRef = useRef(0);
   const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const moleTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+  const moleTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
   // ref holding current spawn fn to allow self-recursion without stale closure
   const spawnMoleFnRef = useRef<() => void>(() => undefined);
 
@@ -220,9 +222,7 @@ const App = () => {
         setMoles((cur) => {
           if (!cur[idx].active || cur[idx].hitAnim) return cur;
           missed = true;
-          return cur.map((m, i) =>
-            i === idx ? { ...m, active: false } : m,
-          );
+          return cur.map((m, i) => (i === idx ? { ...m, active: false } : m));
         });
         // reset combo outside the updater
         if (missed) {
@@ -246,7 +246,10 @@ const App = () => {
   const addParticles = useCallback((x: number, y: number) => {
     const id = particleIdRef.current++;
     setParticles((prev) => [...prev, { id, x, y }]);
-    setTimeout(() => setParticles((prev) => prev.filter((p) => p.id !== id)), 700);
+    setTimeout(
+      () => setParticles((prev) => prev.filter((p) => p.id !== id)),
+      700,
+    );
   }, []);
 
   const addPopup = useCallback(
@@ -278,9 +281,7 @@ const App = () => {
         if (!mole.active || mole.hitAnim) return prev;
         hitPoints = MOLE_POINTS[mole.type];
         hitType = mole.type;
-        return prev.map((m, i) =>
-          i === idx ? { ...m, hitAnim: true } : m,
-        );
+        return prev.map((m, i) => (i === idx ? { ...m, hitAnim: true } : m));
       });
 
       // No hit registered (already inactive / animating)
@@ -361,7 +362,10 @@ const App = () => {
       });
     }, 1000);
 
-    spawnTimerRef.current = setTimeout(spawnMoleFnRef.current, BASE_SPAWN_INTERVAL);
+    spawnTimerRef.current = setTimeout(
+      spawnMoleFnRef.current,
+      BASE_SPAWN_INTERVAL,
+    );
   }, [clearAllTimers, endGame]);
 
   // cleanup on unmount

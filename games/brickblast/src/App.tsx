@@ -126,7 +126,9 @@ function playBlockBreak(ctx: AudioContext, hp: number) {
 }
 
 function playPowerUp(ctx: AudioContext) {
-  [523, 659, 784, 1047].forEach((f, i) => tone(ctx, f, 0.12, "sine", 0.22, i * 0.07));
+  [523, 659, 784, 1047].forEach((f, i) =>
+    tone(ctx, f, 0.12, "sine", 0.22, i * 0.07),
+  );
 }
 
 function playMiss(ctx: AudioContext) {
@@ -171,11 +173,7 @@ function makeBlocks(stage: number): Block[] {
   return blocks;
 }
 
-function makeBall(
-  paddleX: number,
-  paddleW: number,
-  speed: number,
-): Ball {
+function makeBall(paddleX: number, paddleW: number, speed: number): Ball {
   const ang = Math.PI * 0.3 + Math.random() * Math.PI * 0.4;
   const sign = Math.random() < 0.5 ? -1 : 1;
   return {
@@ -343,7 +341,10 @@ const App = () => {
       return gs.activePowers.some((p) => p.type === type);
     }
 
-    function addActivePower(type: Exclude<PowerType, "explosive">, duration: number) {
+    function addActivePower(
+      type: Exclude<PowerType, "explosive">,
+      duration: number,
+    ) {
       const existing = gs.activePowers.find((p) => p.type === type);
       if (existing) {
         existing.remaining = Math.max(existing.remaining, duration);
@@ -425,8 +426,19 @@ const App = () => {
         if (audio) playBlockBreak(audio, Math.max(block.hp, 1));
         if (block.hp <= 0) {
           gs.score += block.maxHp;
-          spawnParticles(gs.particles, block.x, block.y, block.w, block.h, blockColor(1));
-          maybeDrop(gs.droppingPowers, block.x + block.w / 2, block.y + block.h);
+          spawnParticles(
+            gs.particles,
+            block.x,
+            block.y,
+            block.w,
+            block.h,
+            blockColor(1),
+          );
+          maybeDrop(
+            gs.droppingPowers,
+            block.x + block.w / 2,
+            block.y + block.h,
+          );
           gs.blocks = gs.blocks.filter((b) => b !== block);
           gs.combo++;
           gs.comboTimer = COMBO_RESET_MS;
@@ -434,7 +446,12 @@ const App = () => {
           const pts = block.maxHp + bonus;
           gs.score += bonus;
           if (gs.combo >= 3) {
-            addPopup(block.x + block.w / 2, block.y, `${gs.combo}× COMBO!`, true);
+            addPopup(
+              block.x + block.w / 2,
+              block.y,
+              `${gs.combo}× COMBO!`,
+              true,
+            );
           } else {
             addPopup(block.x + block.w / 2, block.y, `+${pts}`, false);
           }
@@ -474,9 +491,7 @@ const App = () => {
       // Ball attached to paddle
       if (gs.ballAttached) {
         // recreate every frame so launch angle is fresh on release
-        gs.balls = [
-          makeBall(gs.paddleX, gs.paddleW, currentSpeed(gs)),
-        ];
+        gs.balls = [makeBall(gs.paddleX, gs.paddleW, currentSpeed(gs))];
         const b = gs.balls[0]!;
         b.x = gs.paddleX + gs.paddleW / 2;
         b.y = PADDLE_Y - BALL_R - 1;
@@ -557,7 +572,8 @@ const App = () => {
         while (gs.balls.length < 3) {
           const src = gs.balls[0]!;
           const spread = Math.PI * 0.15;
-          const angle = Math.atan2(src.dy, src.dx) + (Math.random() - 0.5) * spread;
+          const angle =
+            Math.atan2(src.dy, src.dx) + (Math.random() - 0.5) * spread;
           gs.balls.push({
             ...src,
             dx: Math.cos(angle) * speed,
@@ -602,7 +618,10 @@ const App = () => {
       }
 
       // Stage delay countdown
-      if ((gs.phase === "stageclear" || gs.phase === "gameover") && gs.stageDelay > 0) {
+      if (
+        (gs.phase === "stageclear" || gs.phase === "gameover") &&
+        gs.stageDelay > 0
+      ) {
         gs.stageDelay -= dtSec;
       }
     }
@@ -656,8 +675,20 @@ const App = () => {
         drawTitle();
       } else {
         drawGame();
-        if (gs.phase === "stageclear") drawOverlay("STAGE CLEAR!", `STAGE ${gs.stage}`, "#44ff88", gs.stageDelay);
-        if (gs.phase === "gameover") drawOverlay("GAME OVER", `SCORE: ${gs.score}`, "#ff4455", gs.stageDelay);
+        if (gs.phase === "stageclear")
+          drawOverlay(
+            "STAGE CLEAR!",
+            `STAGE ${gs.stage}`,
+            "#44ff88",
+            gs.stageDelay,
+          );
+        if (gs.phase === "gameover")
+          drawOverlay(
+            "GAME OVER",
+            `SCORE: ${gs.score}`,
+            "#ff4455",
+            gs.stageDelay,
+          );
       }
 
       ctx.restore();
@@ -688,7 +719,12 @@ const App = () => {
       const colors = ["#4488ff", "#44cc66", "#ff4455"];
       for (let i = 0; i < 8; i++) {
         ctx.fillStyle = colors[i % 3]!;
-        ctx.fillRect(BLK_OFFSET_X + i * (BLK_W + BLK_GAP), CH - 120, BLK_W, BLK_H);
+        ctx.fillRect(
+          BLK_OFFSET_X + i * (BLK_W + BLK_GAP),
+          CH - 120,
+          BLK_W,
+          BLK_H,
+        );
       }
     }
 
@@ -723,7 +759,8 @@ const App = () => {
         gs.activePowers.forEach((ap, i) => {
           const label = POWER_LABEL[ap.type];
           const barW = 80;
-          const maxDur = ap.type === "multiball" ? 10 : ap.type === "paddle" ? 8 : 6;
+          const maxDur =
+            ap.type === "multiball" ? 10 : ap.type === "paddle" ? 8 : 6;
           const ratio = ap.remaining / maxDur;
           const bx = CW - barW - 8;
           const by = 40 + i * 22;
@@ -784,7 +821,11 @@ const App = () => {
       // Paddle
       const px = gs.paddleX;
       const pw = gs.paddleW;
-      const padColor = gs.explosiveCharged ? "#ff8800" : hasPower("paddle") ? "#4488ff" : "#ccddff";
+      const padColor = gs.explosiveCharged
+        ? "#ff8800"
+        : hasPower("paddle")
+          ? "#4488ff"
+          : "#ccddff";
       ctx.fillStyle = padColor;
       ctx.beginPath();
       roundRect(ctx, px, PADDLE_Y, pw, PADDLE_H, 6);
@@ -808,7 +849,13 @@ const App = () => {
         ctx.shadowBlur = 0;
         // Shine
         ctx.beginPath();
-        ctx.arc(ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.35, 0, Math.PI * 2);
+        ctx.arc(
+          ball.x - ball.radius * 0.3,
+          ball.y - ball.radius * 0.3,
+          ball.radius * 0.35,
+          0,
+          Math.PI * 2,
+        );
         ctx.fillStyle = "rgba(255,255,255,0.5)";
         ctx.fill();
       }
@@ -822,7 +869,12 @@ const App = () => {
       }
     }
 
-    function drawOverlay(title: string, sub: string, color: string, delay: number) {
+    function drawOverlay(
+      title: string,
+      sub: string,
+      color: string,
+      delay: number,
+    ) {
       ctx.fillStyle = "rgba(0,0,0,0.65)";
       ctx.fillRect(0, 0, CW, CH);
       ctx.shadowColor = color;

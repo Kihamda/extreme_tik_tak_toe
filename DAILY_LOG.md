@@ -16,6 +16,20 @@
   - 原因: `setMoles` の updater 関数内で `setScore` / `setCombo` / `setShaking` / `setFever` / `setParticles` / `setPopups` を呼んでいた (React の state updater は純粋関数でなければならない)。また `doSpawn` の updater 内でもタイマー登録と `setCombo(0)` を呼んでいた
   - 修正: `whackMole` を全面リファクタ — updater でモルの型・ポイントをローカル変数に捕捉し、全 setState・副作用を updater 外に移動。`doSpawn` も同様にタイマー登録と `setCombo(0)` を updater 外に移動
 
+- [完了] モノレポ最適化 → 担当: platform-architect
+  - A: 全15ゲームのdevDependenciesをルートに集約 → 成功
+  - B: packages/game-config 共有設定パッケージ作成 → 成功 (各ゲームへの適用は段階的に)
+  - C: Turborepo追加 → 成功 (ntiktaktoe 1.6s→25ms キャッシュHIT確認)
+- [完了] Viteマルチエントリ統合 + src/shared/ ライブラリ作成 → 担当: platform-architect + gamedev
+  - ルートvite.config.ts → 全14ゲームのindex.htmlをマルチエントリで自動検出 (638ms full build)
+  - src/shared/ 作成: theme.css / useAudio / useParticles / ParticleLayer / ScorePopup / GameShell
+  - flashreflexをPoC適用 → 重複コード約115行削除、ビルド確認済み
+- [完了] 単一Viteアプリ構造への完全移行 → 担当: platform-architect
+  - 各ゲームのpackage.json/vite.config.ts/tsconfig\*.json/eslint.config.js を削除 (95ファイル)
+  - tsconfig.app.json の include を games/\*/src まで拡張
+  - workspacesから games/\* を削除
+  - ビルド623ms・TSCエラー0で確認済み
+
 ### 今日の成果
 
 - brickblast・molemania の2本のゲームのバグを修正、ビルド確認済み

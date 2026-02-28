@@ -1,13 +1,118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>n目並べ</title>
+    <title>Dev Launcher — Game Platform</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
+        background: #0b1220;
+        color: #e5e7eb;
+        padding: 40px 24px;
+        min-height: 100vh;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #93c5fd;
+      }
+      p {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 28px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        max-width: 900px;
+      }
+      a {
+        display: block;
+        padding: 16px 18px;
+        background: rgba(17, 24, 39, 0.88);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #e5e7eb;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      a:hover {
+        border-color: #5078ff;
+        background: rgba(80, 120, 255, 0.12);
+        color: #fff;
+      }
+      .tag {
+        display: block;
+        margin-top: 4px;
+        font-size: 11px;
+        font-weight: 400;
+        color: #64748b;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <h1>🎮 Dev Launcher</h1>
+    <p>
+      ローカル開発用ランチャー。本番:
+      <a
+        href="https://game.kihamda.net/"
+        style="color: #93c5fd; font-size: 13px"
+        >game.kihamda.net</a
+      >
+    </p>
+    <div class="grid">
+      <a href="/games/ntiktaktoe/"
+        ><span class="tag">#ntiktaktoe</span>n目並べ</a
+      >
+      <a href="/games/flashreflex/"
+        ><span class="tag">#flashreflex</span>Flash Reflex</a
+      >
+      <a href="/games/gravityfour/"
+        ><span class="tag">#gravityfour</span>Gravity Four</a
+      >
+      <a href="/games/memoryduel/"
+        ><span class="tag">#memoryduel</span>Memory Duel</a
+      >
+      <a href="/games/snakechaos/"
+        ><span class="tag">#snakechaos</span>Snake Chaos</a
+      >
+      <a href="/games/merge2048/"
+        ><span class="tag">#merge2048</span>Merge 2048</a
+      >
+      <a href="/games/brickblast/"
+        ><span class="tag">#brickblast</span>Brick Blast</a
+      >
+      <a href="/games/molemania/"
+        ><span class="tag">#molemania</span>Mole Mania</a
+      >
+      <a href="/games/colorburst/"
+        ><span class="tag">#colorburst</span>Color Burst</a
+      >
+      <a href="/games/taptarget/"
+        ><span class="tag">#taptarget</span>Tap Target</a
+      >
+      <a href="/games/simonecho/"
+        ><span class="tag">#simonecho</span>Simon Echo</a
+      >
+      <a href="/games/numhunt/"><span class="tag">#numhunt</span>Num Hunt</a>
+      <a href="/games/dodgeblitz/"
+        ><span class="tag">#dodgeblitz</span>Dodge Blitz</a
+      >
+      <a href="/games/typingblitz/"
+        ><span class="tag">#typingblitz</span>Typing Blitz</a
+      >
+    </div>
   </body>
 </html>
