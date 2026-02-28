@@ -12,23 +12,23 @@
 
 ```
 extreme_tik_tok_toe/  (← このリポジトリのみ使用)
+  plugins/portal-ssg.ts  ← Vite SSGプラグイン
   games/
-    ntiktaktoe/       ← Game #1
-    flashreflex/      ← Game #2
-    gravityfour/      ← Game #3
-    memoryduel/       ← Game #4
-    _template/
-  portal/             ← ゲーム一覧サイト (Astro)
-    src/
-      data/games.json ← ゲームメタデータ一元管理
+    _template/           ← 新ゲーム量産テンプレート
+    ntiktaktoe/          ← Game #1
+    ...                  ← Game #2〜#14
+  src/
+    shared/              ← 全ゲーム共通ユーティリティ
+    portal/data/games.json ← ゲームメタデータ一元管理
+  public/                ← thumbnails, manifest, sw.js
   .github/
-    workflows/        ← SNS 自動投稿・デプロイ
+    workflows/           ← SNS 自動投稿・デプロイ
     prompts/
     agents/
 ```
 
-- 各ゲームは Vercel の**個別プロジェクト**として独立してデプロイ (1リポジトリ複数プロジェクト対応)
-- `portal/` もVercel に別プロジェクトとしてデプロイ
+- 単一の Vite ビルドで全体を `dist/` に出力し、単一の Cloudflare Pages プロジェクトにデプロイ
+- ポータルは Vite SSG プラグイン (`plugins/portal-ssg.ts`) がビルド時に HTML を生成
 - **プラットフォームが育つほど新作の初速が上がる** (既存ユーザーへの告知 + SEO 内部リンク効果)
 
 ---
@@ -41,7 +41,7 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [x] Game #1 (`games/ntiktaktoe/`) が分離済み
 - [x] `games/_template/` が存在し、量産の土台がある
 - [x] Game #2〜#14 実装完了（flashreflex/gravityfour/memoryduel/snakechaos/merge2048/brickblast/molemania/colorburst/taptarget/simonecho/numhunt/dodgeblitz/typingblitz）
-- [x] `portal/src/data/games.json` によるメタデータ管理基盤がある（14本登録済み）
+- [x] `src/portal/data/games.json` によるメタデータ管理基盤がある（14本登録済み）
 - [x] 各ゲームの本番URLが揃っているか確認 (確定ドメイン: `https://game.kihamda.net/`)
 - [x] `portal/` 本番公開の確認 (`https://game.kihamda.net/` 到達確認済み)
 - [x] 全ゲームで `lint` と `build` がグリーンか横断確認
@@ -49,6 +49,8 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [x] 全14ゲームに SEO 三点セット（description / OGP / Twitter Card / canonical）追加
 - [x] 全14ゲームに GA4 (G-L7TY3RFZB7) 導入
 - [x] portal 全ページに OGP / canonical 正規化
+- [x] 単一Viteプロジェクトに統合（Astro/Turbo/workspaces廃止）
+- [x] SSGプラグインでポータルHTML/sitemap/headers/redirects自動生成
 
 ### 未完了 / 要確認
 
@@ -108,7 +110,7 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 | Day 11 | P1   | Game #5 雛形作成 (`games/_template/` から)   | 初回コミット完了 ✅                |
 | Day 12 | P1   | Game #5 MVP 実装                             | プレイ可能 ✅                      |
 | Day 13 | P1   | Game #5 SEO最低限 (title/description/OGP)    | メタ反映確認 ✅                    |
-| Day 14 | P0   | `portal/src/data/games.json` 反映 + 公開判定 | ポータル掲載 ✅ + 週次レビュー実施 |
+| Day 14 | P0   | `src/portal/data/games.json` 反映 + 公開判定 | ポータル掲載 ✅ + 週次レビュー実施 |
 
 補足: Day 1 の URL 棚卸しは 2026-02-24 時点で完了条件を満たしている。
 確認済み: `https://game.kihamda.net/` / `https://game.kihamda.net/games/ntiktaktoe/` / `https://game.kihamda.net/games/flashreflex/` / `https://game.kihamda.net/games/gravityfour/` / `https://game.kihamda.net/games/memoryduel/`
@@ -124,16 +126,16 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [ ] バグ洗い出し & 修正 (`npm run lint` 全通過)
 - [ ] PWA 化 (`vite-plugin-pwa`)
 - [ ] SEO meta タグ + OGP 設定
-- [ ] Vercel にデプロイ (`game-01.yourdomain.vercel.app`)
+- [ ] Cloudflare Pages にデプロイ
 - [ ] Google Search Console 登録
 - [ ] AdSense 審査申請 (審査に数週間かかるので**今すぐ申請**)
 
 **モノレポへのリストラクチャ**
 
 - [x] `src/` → `games/ntiktaktoe/src/` に移動、ルートの `vite.config.ts` も移動
-- [ ] `games/ntiktaktoe/` を Vercel プロジェクトとして設定 (Root Directory: `games/ntiktaktoe`)
-- [x] `portal/` ディレクトリを作成 (Astro)
-- [x] `portal/src/data/games.json` でゲームメタデータを一元管理
+- [x] 単一 Vite ビルドに統合（個別 Vercel プロジェクト不要）
+- [x] SSG プラグインでポータル生成 (`plugins/portal-ssg.ts`)
+- [x] `src/portal/data/games.json` でゲームメタデータを一元管理
 - [x] Game #2 の企画を決定
 
 **Copilot 活用**: `/pwa`・`/seo` プロンプトを使う、`/platform-setup` でポータル構築
@@ -153,11 +155,8 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 目標: `portal/` 公開・ゲーム5本・SNS 自動化稼働
 
-- [ ] `portal/` を Vercel にデプロイ (Root Directory: `portal`)
-  - トップ: ゲーム一覧 + 新着カード
-  - 各ゲームページ: 説明・プレイボタン・AdSense
-  - `portal/src/data/games.json` を更新するだけで新作が追加される仕組み
-- [ ] `games/` 配下に月1〜2本のペースで新ゲームを追加 → `games.json` に登録 → Vercel に新プロジェクト追加
+- [x] ポータルは SSG プラグインで生成（`src/portal/data/games.json` を更新するだけで新作が追加される仕組み）
+- [ ] `games/` 配下に月1〜2本のペースで新ゲームを追加 → `games.json` に登録 → `npm run build` でデプロイ
 - [ ] SNS 自動化を GitHub Actions で構築 (新作公開 → 自動ポスト)
 - [ ] Google Analytics 4 をプラットフォームと各ゲームに設置
 - [ ] 内部リンク: 各ゲームページから他のゲームへ誘導

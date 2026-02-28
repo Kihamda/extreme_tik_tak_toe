@@ -1,6 +1,6 @@
 # extreme_tik_tok_toe platform
 
-ブラウザゲームプラットフォームのモノレポ。全ゲームを1リポジトリで管理し、Vercel にデプロイする。
+ブラウザゲームプラットフォームのモノレポ。全ゲームを1リポジトリで管理し、Cloudflare Pages にデプロイする。
 
 **Portal**: https://game.kihamda.net/
 
@@ -27,24 +27,16 @@
 
 ```
 extreme_tik_tok_toe/
+  plugins/               ← Vite SSGプラグイン
   games/
-    ntiktaktoe/    ← Game #1
-    flashreflex/   ← Game #2
-    gravityfour/   ← Game #3
-    memoryduel/    ← Game #4
-    snakechaos/    ← Game #5
-    merge2048/     ← Game #6
-    brickblast/    ← Game #7
-    molemania/     ← Game #8
-    colorburst/    ← Game #9
-    taptarget/     ← Game #10
-    simonecho/     ← Game #11
-    numhunt/       ← Game #12
-    dodgeblitz/    ← Game #13
-    typingblitz/   ← Game #14
-    _template/     ← 新ゲーム量産テンプレート
-  portal/          ← Astro SSG ゲーム一覧ポータル
-  scripts/         ← 一括ビルドスクリプト
+    _template/           ← 新ゲーム量産テンプレート
+    ntiktaktoe/          ← Game #1
+    ...                  ← Game #2〜#14
+  src/
+    shared/              ← 全ゲーム共通ユーティリティ
+    portal/data/         ← ゲームメタデータ
+  public/                ← 静的アセット(thumbnails, manifest, sw.js)
+  dist/                  ← ビルド出力(ポータル + 全ゲーム)
 ```
 
 ## セットアップ
@@ -55,16 +47,8 @@ npm install
 
 ## 開発
 
-ゲームを起動
-
 ```bash
-npm run dev:ntiktaktoe
-```
-
-ポータルを起動
-
-```bash
-npm run dev:portal
+npm run dev
 ```
 
 ## ビルド
@@ -77,15 +61,15 @@ npm run build
 
 ## lint
 
-ワークスペース全体で lint 実行
-
 ```bash
-npm run lint:all
+npm run lint
 ```
 
 ## 新ゲーム追加手順
 
 1. `games/_template` を `games/[your-id]` にコピー
-2. `vite.config.ts` の `base` を `/games/[your-id]/` に変更
-3. `portal/src/data/games.json` に登録
-4. `npm run build` で `dist/games/[your-id]/` が出ることを確認
+2. `src/` 内をゲームロジックで実装
+3. `index.html` の title/meta/OGP/canonical/GA4 を設定
+4. `src/portal/data/games.json` に登録
+5. `public/thumbnails/[your-id].svg` にサムネイルを追加
+6. `npm run build` で確認

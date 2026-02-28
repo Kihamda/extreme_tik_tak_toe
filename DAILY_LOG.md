@@ -30,12 +30,33 @@
   - workspacesから games/\* を削除
   - ビルド623ms・TSCエラー0で確認済み
 
+- [完了] 単一Vite SSGプロジェクトへの完全統合 → 担当: platform-architect
+  - Astro portal を廃止 → plugins/portal-ssg.ts (Vite SSGプラグイン) に移行
+  - ポータルHTML/sitemap.xml/_headers/_redirects をビルド時自動生成
+  - portal/src/data/games.json → src/portal/data/games.json に移動
+  - portal/public/ → public/ に移動(thumbnails, manifest, sw.js)
+  - portal/ ディレクトリ・packages/ ディレクトリ・turbo.json 全削除
+  - scripts/build-all.sh 廃止 → 単一 `npm run build` (= tsc -b && vite build) に統一
+  - workspaces 削除・package.json に "type": "module" 追加
+  - ビルド618ms・TSCエラー0・ESLintエラー0で確認済み
+- [完了] 全ドキュメント・agent・prompt・workflowの新アーキテクチャ対応 → 担当: agent-editor
+  - .github/copilot-instructions.md 全面書き換え
+  - 10エージェント (.github/agents/*.agent.md) 更新
+  - 9プロンプト (.github/prompts/*.prompt.md) 更新
+  - 3ワークフロー (build-and-deploy/ci/release-pipeline .yml) 更新
+  - README.md・ROADMAP.md 更新
+
 ### 今日の成果
 
-- brickblast・molemania の2本のゲームのバグを修正、ビルド確認済み
+- brickblast・molemania の2本のゲームのバグを修正
+- 単一Vite SSGプロジェクトに完全統合(Astro/Turbo/workspaces全廃止)
+- 全ドキュメント・エージェント設定・ワークフローを新アーキテクチャに更新
+- ビルド618ms、TSCエラー0、ESLintエラー0
 
 ### 明日やること
 
+- PR作成 → mainマージ → デプロイ(人間の作業)
+- Search Console に sitemap.xml を送信(人間の作業)
 - 引き続き ROADMAP.md のタスクを消化
 
 ---

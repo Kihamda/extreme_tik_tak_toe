@@ -2,30 +2,48 @@
 
 ## Project Overview
 
-**このリポジトリはこの1つだけ使用する。** ブラウザゲームプラットフォーム全体をこのモノレポで管理する。
+**このリポジトリはこの1つだけ使用する。** ブラウザゲームプラットフォーム全体を単一の Vite プロジェクトで管理する。
 
 ```
 extreme_tik_tok_toe/
+  plugins/
+    portal-ssg.ts        # ポータル SSG プラグイン（ビルド時に portal HTML 生成）
   games/
-    _template/        # 新作ゲームの雛形
-    ntiktaktoe/       # Game #1 「n目並べ」
-      src/            # 元の src/ をここに移動する
-      index.html
-      vite.config.ts
-      package.json
-    game-02/          # Game #2 ([将来])
-  portal/             # ゲーム一覧セート (Astro)
-    src/
-      data/games.json # ゲームメタデータ一元管理
+    _template/            # 新作ゲームの雛形
+    ntiktaktoe/           # Game #1 「n目並べ」
+    flashreflex/          # Game #2
+    ...                   # 計14本以上のゲーム
+  src/
+    shared/               # 全ゲーム共通ユーティリティ
+      index.ts
+      theme.css
+      components/
+        GameShell.tsx      # 共通レイアウトシェル
+        ParticleLayer.tsx  # パーティクル演出
+        ScorePopup.tsx     # スコアポップアップ
+      hooks/
+        useAudio.ts        # オーディオ管理
+        useParticles.ts    # パーティクル管理
+    portal/
+      data/
+        games.json         # ゲームメタデータ一元管理
+  public/
+    thumbnails/            # ゲームサムネイル SVG
+    manifest.webmanifest
+    sw.js
+  index.html               # 開発用ランチャー（ビルドには含まれない）
+  vite.config.ts           # 単一 Vite 設定（マルチエントリ + SSG プラグイン）
   .github/
-    workflows/
-    prompts/
     agents/
+    prompts/
+    workflows/
 ```
 
-各ゲーム (`games/*/`) と `portal/` は全体 `scripts/build-all.sh` で一括ビルドされ、単一の Cloudflare Pages プロジェクトにデプロイする。
+単一の `npm run build` で全ゲーム + ポータルを `dist/` に出力し、Cloudflare Pages にデプロイする。
 
 ## Architecture
+
+### ntiktaktoe の設計パターン（全ゲームの参考設計）
 
 ```
 games/ntiktaktoe/src/
@@ -38,9 +56,29 @@ games/ntiktaktoe/src/
     players.ts         # プレイヤー設定の純粋関数 (add/remove/update)
     board.ts           # ボード操作・勝利判定の純粋関数
     storage.ts         # localStorage への読み書き（副作用はここだけ）
+    audio.ts           # ゲーム固有のオーディオ設定
 ```
 
-**新ゲームの追加手順**: `games/_template/` をコピー → `games/[game-id]/` にリネーム → `src/` を書き換え → `portal/src/data/games.json` に追記
+### 共通ユーティリティ (`src/shared/`)
+
+全ゲームが `@shared` パスエイリアス経由でインポートできる共通モジュール:
+
+- `GameShell` — 共通レイアウトシェル
+- `ParticleLayer` / `useParticles` — パーティクル演出
+- `ScorePopup` — スコアポップアップ
+- `useAudio` — オーディオ管理
+- `theme.css` — 共通テーマ変数
+
+### Portal SSG (`plugins/portal-ssg.ts`)
+
+Vite プラグインとしてビルド時に以下を生成:
+
+- `dist/index.html` — ポータルホームページ（SSG）
+- `dist/sitemap.xml` — サイトマップ
+- `dist/_headers` — Cloudflare Pages キャッシュヘッダー
+- `dist/_redirects` — SPA fallback per game
+
+データソースは `src/portal/data/games.json`。
 
 **設計方針**:
 
@@ -57,35 +95,25 @@ games/ntiktaktoe/src/
 
 ## Build & Dev Commands
 
-各ゲームと portal はそれぞれのディレクトリ内で実行する:
+プロジェクトルートで全て実行する（個別ゲームディレクトリでの実行は不要）:
 
 ```bash
-# 特定のゲームを開発する場合
-cd games/ntiktaktoe
-npm install
-npm run dev          # 開発サーバー起動
-npm run build        # tsc -b && vite build
+npm run dev          # Vite 開発サーバー起動（ルート index.html がランチャー）
+npm run build        # tsc -b && vite build（全ゲーム + portal SSG → dist/）
+npm run preview      # ビルド結果のプレビューサーバー
 npm run lint         # ESLint チェック
-
-# portal を開発する場合
-cd portal
-npm install
-npm run dev
-npm run build
 ```
 
-- **ビルドコマンド**:
-  - 全体: `bash scripts/build-all.sh` (全ゲーム + portal → `dist/`)
-  - 山 portal: `cd portal && npm run build`
-  - 1ゲーム: `cd games/[id] && npm run build`
-- **各ゲームの base パス**: `base: '/games/[game-id]/'` が必須 (Cloudflare Pages 単一ドメイン配下)
-- **URL 構造**: `https://[CF-domain]/` (ポータル) / `https://[CF-domain]/games/[id]/` (各ゲーム)
+- **開発時**: `npm run dev` → ブラウザで `/` を開くと開発ランチャー（各ゲームへのリンク一覧）。各ゲームは `/games/[id]/index.html` でアクセス
+- **ビルド**: Vite マルチエントリで `games/*/index.html` を全処理 → `plugins/portal-ssg.ts` が portal HTML・sitemap 等を生成 → `public/` の内容が `dist/` にコピー
+- **最終出力**: `dist/` 一つに全部入り
+- **URL 構造**: `https://game.kihamda.net/` (ポータル) / `https://game.kihamda.net/games/[id]/` (各ゲーム)
 
 ## Code Style
 
 - **型インポートは必ず `import type`**: `verbatimModuleSyntax: true` のため必須
 - **strict モード全有効**: `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch` など
-- CSS は `src/App.css` の単一ファイル。BEM ライクなクラス名（例: `.start-card`, `.player-config-item`）
+- CSS は各ゲームの `src/App.css` + 共通の `src/shared/theme.css`。BEM ライクなクラス名（例: `.start-card`, `.player-config-item`）
 - コンポーネントは props を明示的な interface で型定義する
 - 不要なコメントは書かない
 
@@ -101,9 +129,11 @@ DevicePreferences              // デバイス固有設定（確認モード等�
 
 ## Integration Points
 
+- **Portal SSG**: `plugins/portal-ssg.ts` がビルド時に `src/portal/data/games.json` を読み、ポータル HTML・sitemap・`_headers`・`_redirects` を `dist/` に出力
+- **共通ユーティリティ**: `src/shared/` から `@shared` エイリアスでインポート（`GameShell`, `useAudio`, `useParticles` 等）
 - **localStorage**: `saveGameState` / `loadGameState` / `clearSavedGame` (`lib/storage.ts`)
+- **public/**: `thumbnails/`, `manifest.webmanifest`, `sw.js` がビルド時に `dist/` へコピー
 - 外部 API・認証・テストフレームワークは未使用
-- Vite の `base: '/games/[game-id]/'` 設定あり（Cloudflare Pages パスベース配信）
 
 ## Platform Strategy
 
@@ -114,19 +144,27 @@ DevicePreferences              // デバイス固有設定（確認モード等�
 **ホスティング戦略**:
 
 - Cloudflare Pages (無料・無制限帯域・CDN) 単一プロジェクト
-- `scripts/build-all.sh` で全ゲーム + portal を `dist/` に一括ビルド
+- 単一の `npm run build` で全ゲーム + ポータルを `dist/` に一括ビルド
 - GitHub Actions (`build-and-deploy.yml`) が main push 時に自動デプロイ
 - Cloudflare エッジキャッシュ + Service Worker の2層キャッシュ
-- PWA: `portal/` 内の単一 SW + manifest が scope `/` で全ゲームをカバー
+- PWA: `public/sw.js` + `public/manifest.webmanifest` が scope `/` で全ゲームをカバー
 
 **優先順位**:
 
-1. モノレポ構成にリストラクチャ: `src/` → `games/ntiktaktoe/src/`、`portal/` ディレクトリ作成
-2. Game #1 (`games/ntiktaktoe/`) を Cloudflare Pages に公開、AdSense 审査申請
-3. `portal/` を Cloudflare Pages 内の `/` のルートとして公開
-4. `games/` 配下に新作を月1〜2本追加、`games.json` + SNS 自動投稿
+1. `games/` 配下に新作を継続追加、`games.json` + SNS 自動投稿
+2. AdSense 審査・収益化の推進
+3. 共通ユーティリティ (`src/shared/`) の拡充
 
-**据りにすべきパターン**: `games/ntiktaktoe/src/lib/` の純粋関数設計。新ゲーム作成時もこの設計を踏襲する。
+**拠りにすべきパターン**: `games/ntiktaktoe/src/lib/` の純粋関数設計。新ゲーム作成時もこの設計を踏襲する。
+
+## 新ゲーム追加手順
+
+1. `games/_template/` を `games/[game-id]/` にコピー
+2. `src/` 内をゲームロジックで実装（共通ユーティリティは `@shared` からインポート）
+3. `index.html` の title / meta / OGP / GA4 を設定
+4. `src/portal/data/games.json` にエントリ追加
+5. `public/thumbnails/[game-id].svg` にサムネイル追加
+6. `npm run build` で確認
 
 ## Copilot Agents & Prompts
 

@@ -26,7 +26,7 @@ on:
         required: true
         type: string
       game_url:
-        description: "Vercel の URL (例: https://ntiktaktoe.vercel.app)"
+        description: "ゲームの URL (例: https://game.kihamda.net/games/ntiktaktoe/)"
         required: true
         type: string
       game_description:
@@ -53,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolve game directory
+      - name: Resolve game ID
         id: resolve
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
@@ -62,11 +62,6 @@ jobs:
             GAME_ID="${{ inputs.game_id }}"
           fi
           echo "game_id=$GAME_ID" >> $GITHUB_OUTPUT
-          if [ -d "games/$GAME_ID" ]; then
-            echo "game_dir=games/$GAME_ID" >> $GITHUB_OUTPUT
-          else
-            echo "game_dir=." >> $GITHUB_OUTPUT
-          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -79,10 +74,7 @@ jobs:
         run: npm ci
 
       - name: Lint & Build
-        run: |
-          npm run lint
-          npm run build
-        working-directory: ${{ steps.resolve.outputs.game_dir }}
+        run: npm run lint && npm run build
 
   post-twitter:
     runs-on: ubuntu-latest
@@ -99,7 +91,7 @@ jobs:
           else
             GAME_ID=$(echo "${{ github.ref_name }}" | sed 's|games/||' | sed 's|@.*||')
             TITLE="$GAME_ID"
-            URL="https://$GAME_ID.vercel.app"
+            URL="https://game.kihamda.net/games/$GAME_ID/"
             DESC="新しいブラウザゲームを公開しました！"
           fi
 

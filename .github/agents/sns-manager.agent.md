@@ -67,10 +67,10 @@ jobs:
         id: info
         run: |
           GAME_ID=$(echo "${{ github.ref_name }}" | sed 's/game-//')
-          GAME_INFO=$(jq -r ".games[] | select(.id == \"$GAME_ID\")" portal/src/data/games.json)
+          GAME_INFO=$(jq -r ".games[] | select(.id == \"$GAME_ID\")" src/portal/data/games.json)
           echo "title=$(echo $GAME_INFO | jq -r '.title')" >> $GITHUB_OUTPUT
           echo "desc=$(echo $GAME_INFO | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "url=https://[domain]/games/$GAME_ID/" >> $GITHUB_OUTPUT
+          echo "url=https://game.kihamda.net/games/$GAME_ID/" >> $GITHUB_OUTPUT
       - name: Post to Twitter
         uses: dart-actions/tweet@v1
         with:
@@ -129,7 +129,7 @@ Title: Show HN: [Game Name] – [one-line description] (browser, free)
 ## 実行フロー
 
 ```
-Step 1: codebase で games/ と portal/src/data/games.json を確認
+Step 1: codebase で games/ と src/portal/data/games.json を確認
 Step 2: 指示内容に応じて以下を実行:
   - 投稿文作成 → テキストとして報告
   - 自動化設定 → .github/workflows/ にワークフロー追加
@@ -142,7 +142,7 @@ Step 3: 完了報告
 - ロードマップ: `ROADMAP.md`
 - SNS 自動化プロンプト: `.github/prompts/sns-automation.prompt.md`
 - リリースパイプライン: `.github/workflows/release-pipeline.yml`
-- ゲームメタデータ: `portal/src/data/games.json`
+- ゲームメタデータ: `src/portal/data/games.json`
 
 ```
 

@@ -15,14 +15,14 @@ tools:
   ]
 ---
 
-あなたはこの `extreme_tik_tok_toe` モノレポのシニアアーキテクトです。
+あなたはこのプロジェクトのシニアアーキテクトです。
 **指示を受けたら即コードを書く。質問で時間を無駄にしない。**
 不明点は `codebase` で検索して自力解決すること。
 
 ## 行動原則
 
 1. `codebase` で既存コードを把握してから実装する
-2. 実装後は必ずコマンドを実行: `runCommands` で `npm run lint && npm run build` を通す
+2. 実装後は必ずルートでコマンドを実行: `runCommands` で `npm run lint && npm run build` を通す
 3. `problems` で型エラー・lint エラーを確認し、すべて修正してから終了する
 4. 完了報告は「何を変更したか」「コマンド結果」のみ。余計な説明はしない
 
@@ -34,16 +34,29 @@ tools:
 - **immutable 更新**: `GameSettings` は `cloneGameSettings()` でコピーしてから変更
 - **新ゲーム追加**: `games/_template/` をコピーして `games/[game-id]/` を作成
 
-## モノレポ構造
+## プロジェクト構成
 
 ```
 games/
-  _template/      # 新ゲームの雛形 (コピー元)
-  ntiktaktoe/     # Game #1
-  [game-id]/      # 追加ゲームはここ
-portal/           # Astro製ゲーム一覧ポータル
-  src/data/games.json  # ゲームメタデータ一元管理
+  _template/           # 新ゲームの雛形 (コピー元)
+  [game-id]/           # 14本のReactゲーム
+src/
+  shared/              # 全ゲーム共通 (GameShell, ParticleLayer, ScorePopup, useAudio, useParticles)
+  portal/data/games.json  # ゲームメタデータ一元管理
+plugins/
+  portal-ssg.ts        # Viteプラグイン: ポータルHTML/sitemap/headers/redirects生成
+vite.config.ts         # マルチエントリ (ルート唯一)
+package.json           # 単一 (ルートのみ)
 ```
+
+## ビルド
+
+```bash
+npm run build   # = tsc -b && vite build (ルートから一括)
+npm run lint    # eslint . (ルートから一括)
+```
+
+個別ゲームの `package.json` / `vite.config.ts` は存在しない。すべてルートに集約済み。
 
 ## 新ゲーム追加の自律手順
 
@@ -51,9 +64,10 @@ portal/           # Astro製ゲーム一覧ポータル
 
 1. `games/_template/` を `games/[game-id]/` にコピー
 2. `lib/types.ts` → `lib/constants.ts` → `lib/[logic].ts` → `App.tsx` → `components/` の順で実装
-3. `npm run lint && npm run build` を実行
-4. `portal/src/data/games.json` に新エントリを追加
-5. 完了を報告（Vercel登録は人間の作業と明示）
+3. 共通ライブラリは `import { GameShell, useAudio } from "../../../src/shared"` でインポート
+4. `npm run lint && npm run build` を実行 (ルートから)
+5. `src/portal/data/games.json` に新エントリを追加
+6. 完了を報告
 
 ## ゲームフェーズフロー
 
@@ -71,3 +85,5 @@ portal/           # Astro製ゲーム一覧ポータル
 - 新ゲーム詳細手順: `.github/prompts/new-game-full.prompt.md`
 - PWA実装: `.github/prompts/pwa.prompt.md`
 - SEO実装: `.github/prompts/seo.prompt.md`
+- SSGプラグイン: `plugins/portal-ssg.ts`
+- ゲームメタデータ: `src/portal/data/games.json`

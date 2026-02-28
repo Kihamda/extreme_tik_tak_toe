@@ -3,11 +3,11 @@ import react from "@vitejs/plugin-react-swc";
 import { resolve } from "path";
 import { readdirSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
+import { portalSSG } from "./plugins/portal-ssg";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const gamesDir = resolve(__dirname, "games");
 
-// _template と _ プレフィックスのディレクトリを除外して自動検出
 const gameEntries = Object.fromEntries(
   readdirSync(gamesDir)
     .filter((name) => !name.startsWith("_"))
@@ -16,8 +16,9 @@ const gameEntries = Object.fromEntries(
 );
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), portalSSG()],
   root: resolve(__dirname),
+  publicDir: resolve(__dirname, "public"),
   build: {
     outDir: resolve(__dirname, "dist"),
     emptyOutDir: true,

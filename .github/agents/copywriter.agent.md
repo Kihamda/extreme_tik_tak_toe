@@ -90,7 +90,7 @@ og:description: [ベネフィット]。ダウンロード不要、今すぐブ�
 
 ## 参照
 
-- ゲームメタデータ: `portal/src/data/games.json`
+- ゲームメタデータ: `src/portal/data/games.json`
 - SEO プロンプト: `.github/prompts/seo.prompt.md`
 - SNS エージェント: `.github/agents/sns-manager.agent.md`
 

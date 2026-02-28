@@ -48,7 +48,7 @@ tools:
 - 新ゲームタグプッシュ時に自動ポスト
 - 実装は `.github/workflows/release-pipeline.yml` に集約
 - シークレット: `TWITTER_API_KEY`, `TWITTER_API_SECRET`, `TWITTER_ACCESS_TOKEN`, `TWITTER_ACCESS_TOKEN_SECRET`
-- 投稿 URL: `https://[CF Pages ドメイン]/games/[id]/` (全ゲーム同一ドメイン)
+- 投稿 URL: `https://game.kihamda.net/games/[id]/` (全ゲーム同一ドメイン)
 
 ## 相談役 (consultant) との連携
 
@@ -63,4 +63,5 @@ tools:
 - 日報: `DAILY_LOG.md`
 - SNS 自動化ワークフロー: `.github/workflows/release-pipeline.yml`
 - ゲーム企画生成: `.github/prompts/game-ideation.prompt.md`
-- ポータル構築: `.github/prompts/portal-setup.prompt.md`
+- SSGプラグイン: `plugins/portal-ssg.ts`
+- ゲームメタデータ: `src/portal/data/games.json`

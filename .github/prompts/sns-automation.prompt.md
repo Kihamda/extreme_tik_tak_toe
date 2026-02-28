@@ -109,12 +109,14 @@ on:
 
 `scripts/games.json` を作成して管理:
 
+※ 正式なゲームメタデータは `src/portal/data/games.json` を参照すること。
+
 ```json
 [
   {
     "title": "n目並べ",
     "description": "2〜10人対応！自由なルールで遊べるボードゲーム",
-    "url": "https://YOUR_DOMAIN/ntiktaktoe",
+    "url": "https://game.kihamda.net/games/ntiktaktoe/",
     "tags": ["ボードゲーム", "ブラウザゲーム", "五目並べ"],
     "releaseDate": "2026-02-21"
   }

@@ -29,7 +29,7 @@ tools:
 
 ```
 
-Step 1: codebase で対象ファイル (index.html, portal/) を把握
+Step 1: codebase で対象ファイル (games/[id]/index.html, plugins/portal-ssg.ts) を把握
 Step 2: 現在の SEO 状態を監査する
 Step 3: 以下を実装する:
 
@@ -39,7 +39,7 @@ Step 3: 以下を実装する:
 - JSON-LD 構造化データ
 - canonical URL
 - lang 属性
-  Step 4: portal の場合は sitemap.xml と robots.txt も生成
+  Step 4: sitemap.xml は plugins/portal-ssg.ts が自動生成する (手動不要)
   Step 5: 変更内容を報告
 
 ````
@@ -118,14 +118,25 @@ Step 3: 以下を実装する:
 
 各ゲームのフッターに「他のゲームも遊ぶ」セクションを設置:
 
-- portal の games.json から関連タグのゲームを3-5件表示
+- `src/portal/data/games.json` から関連タグのゲームを3-5件表示
 - パンくずリスト: ホーム > ゲーム一覧 > [ゲーム名]
+
+## ポータル SEO
+
+`plugins/portal-ssg.ts` がビルド時に以下を自動生成する:
+- ポータル HTML (meta/OGP/canonical 付き)
+- `sitemap.xml` (全ゲームの URL を含む)
+- `_headers` (Cloudflare Pages キャッシュ設定)
+
+ポータル側の SEO を変更する場合は `plugins/portal-ssg.ts` を編集すること。
 
 ## 参照
 
 - プロジェクト設定: `.github/copilot-instructions.md`
 - ロードマップ: `ROADMAP.md`
 - SEO プロンプト: `.github/prompts/seo.prompt.md`
+- SSGプラグイン: `plugins/portal-ssg.ts`
+- ゲームメタデータ: `src/portal/data/games.json`
 
 ```
 

@@ -33,15 +33,15 @@ tools:
 
 ```
 
-Step 1: cd games/[id] && npm run lint
+Step 1: ルートで npm run lint を実行
 → エラーがあれば修正 or 報告
-Step 2: cd games/[id] && npm run build
+Step 2: ルートで npm run build を実行 (= tsc -b && vite build)
 → ビルドエラーがあれば修正 or 報告
 Step 3: problems で全ファイルの型エラーを確認
 → エラーがあれば修正 or 報告
 Step 4: バンドルサイズ確認
 → dist/ のサイズを報告 (目安: JS < 200KB gzip)
-Step 5: index.html の meta タグ・SEO 要素を確認
+Step 5: games/[id]/index.html の meta タグ・SEO 要素を確認
 Step 6: アクセシビリティ基本チェック
 → button に aria-label があるか、color contrast は十分か
 Step 7: チェック結果を一覧で報告
@@ -52,7 +52,7 @@ Step 7: チェック結果を一覧で報告
 
 ```
 
-Step 1: npm run lint && npm run build
+Step 1: ルートで npm run lint && npm run build を実行
 Step 2: problems で変更ファイル周辺の型エラーを確認
 Step 3: OK / NG を報告
 
@@ -107,6 +107,8 @@ Step 3: OK / NG を報告
 ## 参照
 
 - プロジェクト設定: `.github/copilot-instructions.md`
-- ビルドスクリプト: `scripts/build-all.sh`
+- Vite設定: `vite.config.ts`
+- SSGプラグイン: `plugins/portal-ssg.ts`
+- ゲームメタデータ: `src/portal/data/games.json`
 
 ```
