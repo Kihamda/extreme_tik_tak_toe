@@ -191,6 +191,10 @@ const App = () => {
     const elapsed = (Date.now() - startTimeRef.current) / 1000;
     const factor = getSpeedFactor(elapsed);
 
+    // Capture spawn result outside the updater so we can run side effects after
+    let spawnIdx: number | null = null;
+    let spawnType: MoleType = "normal";
+
     setMoles((prev) => {
       const freeIdxs = prev.reduce<number[]>((acc, m, i) => {
         if (!m.active) acc.push(i);
@@ -198,30 +202,36 @@ const App = () => {
       }, []);
       if (freeIdxs.length === 0) return prev;
 
-      const idx = freeIdxs[Math.floor(Math.random() * freeIdxs.length)];
+      spawnIdx = freeIdxs[Math.floor(Math.random() * freeIdxs.length)];
       const r = Math.random();
-      const type: MoleType = r < 0.15 ? "golden" : r < 0.3 ? "bomb" : "normal";
+      spawnType = r < 0.15 ? "golden" : r < 0.3 ? "bomb" : "normal";
 
-      const next = prev.map((m, i) =>
-        i === idx ? { active: true, type, hitAnim: false } : m,
+      return prev.map((m, i) =>
+        i === spawnIdx ? { active: true, type: spawnType, hitAnim: false } : m,
       );
+    });
 
-      const duration = BASE_VISIBLE_DURATION[type] / factor;
+    // Register auto-hide timer outside the updater (side effect)
+    if (spawnIdx !== null) {
+      const idx = spawnIdx;
+      const duration = BASE_VISIBLE_DURATION[spawnType] / factor;
       const t = setTimeout(() => {
+        let missed = false;
         setMoles((cur) => {
           if (!cur[idx].active || cur[idx].hitAnim) return cur;
-          // missed — reset combo
-          comboRef.current = 0;
-          setCombo(0);
+          missed = true;
           return cur.map((m, i) =>
             i === idx ? { ...m, active: false } : m,
           );
         });
+        // reset combo outside the updater
+        if (missed) {
+          comboRef.current = 0;
+          setCombo(0);
+        }
       }, duration);
       moleTimersRef.current.set(idx, t);
-
-      return next;
-    });
+    }
 
     const interval = BASE_SPAWN_INTERVAL / factor;
     spawnTimerRef.current = setTimeout(spawnMoleFnRef.current, interval);
@@ -254,64 +264,73 @@ const App = () => {
   // ── Whack ────────────────────────────────────────────────────────────────
   const whackMole = useCallback(
     (idx: number, e: React.SyntheticEvent<HTMLDivElement>) => {
+      // Capture position before React may null currentTarget
+      const rect = e.currentTarget.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      // Capture hit info from inside updater (updater runs synchronously)
+      let hitPoints = 0;
+      let hitType: MoleType | null = null;
+
       setMoles((prev) => {
         const mole = prev[idx];
         if (!mole.active || mole.hitAnim) return prev;
-
-        const rect = e.currentTarget.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-
-        const points = MOLE_POINTS[mole.type];
-        const isBomb = mole.type === "bomb";
-
-        scoreRef.current = Math.max(0, scoreRef.current + points);
-        setScore(scoreRef.current);
-
-        if (isBomb) {
-          comboRef.current = 0;
-          setCombo(0);
-          setShaking(true);
-          setTimeout(() => setShaking(false), 500);
-          playBombHit();
-        } else {
-          comboRef.current += 1;
-          const newCombo = comboRef.current;
-          setCombo(newCombo);
-          if (newCombo >= 5 && newCombo % 5 === 0) {
-            setFever(true);
-            playCombo();
-            setTimeout(() => setFever(false), 900);
-          } else if (mole.type === "golden") {
-            playGoldenHit();
-          } else {
-            playNormalHit();
-          }
-        }
-
-        addParticles(cx, cy);
-        addPopup(cx, cy, points, isBomb);
-
-        // cancel auto-hide timer
-        const existing = moleTimersRef.current.get(idx);
-        if (existing !== undefined) {
-          clearTimeout(existing);
-          moleTimersRef.current.delete(idx);
-        }
-
-        // hit animation → deactivate
-        setTimeout(() => {
-          setMoles((cur) =>
-            cur.map((m, i) =>
-              i === idx ? { ...m, active: false, hitAnim: false } : m,
-            ),
-          );
-        }, 280);
-
+        hitPoints = MOLE_POINTS[mole.type];
+        hitType = mole.type;
         return prev.map((m, i) =>
           i === idx ? { ...m, hitAnim: true } : m,
         );
       });
+
+      // No hit registered (already inactive / animating)
+      if (hitType === null) return;
+
+      const isBomb = hitType === "bomb";
+
+      // All side effects outside the updater
+      scoreRef.current = Math.max(0, scoreRef.current + hitPoints);
+      setScore(scoreRef.current);
+
+      if (isBomb) {
+        comboRef.current = 0;
+        setCombo(0);
+        setShaking(true);
+        setTimeout(() => setShaking(false), 500);
+        playBombHit();
+      } else {
+        comboRef.current += 1;
+        const newCombo = comboRef.current;
+        setCombo(newCombo);
+        if (newCombo >= 5 && newCombo % 5 === 0) {
+          setFever(true);
+          playCombo();
+          setTimeout(() => setFever(false), 900);
+        } else if (hitType === "golden") {
+          playGoldenHit();
+        } else {
+          playNormalHit();
+        }
+      }
+
+      addParticles(cx, cy);
+      addPopup(cx, cy, hitPoints, isBomb);
+
+      // cancel auto-hide timer
+      const existing = moleTimersRef.current.get(idx);
+      if (existing !== undefined) {
+        clearTimeout(existing);
+        moleTimersRef.current.delete(idx);
+      }
+
+      // hit animation → deactivate
+      setTimeout(() => {
+        setMoles((cur) =>
+          cur.map((m, i) =>
+            i === idx ? { ...m, active: false, hitAnim: false } : m,
+          ),
+        );
+      }, 280);
     },
     [addParticles, addPopup],
   );

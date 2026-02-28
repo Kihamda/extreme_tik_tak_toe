@@ -12,7 +12,12 @@ export const getStaticPaths = async () => {
 const { game } = Astro.props;
 ---
 
-<Layout title={`${game.title} | Game Portal`} description={game.description}>
+<Layout
+  title={`${game.title} | game.kihamda.net`}
+  description={game.description}
+  canonicalUrl={`https://game.kihamda.net/games/${game.id}/`}
+  ogType="website"
+>
   <article class="detail">
     <img src={game.thumbnail} alt={`${game.title} thumbnail`} />
     <h1>{game.title}</h1>

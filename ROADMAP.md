@@ -33,7 +33,7 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 ---
 
-## 現在地 (2026-02-25 時点)
+## 現在地 (2026-02-27 時点)
 
 ### 完了済み
 
@@ -46,14 +46,16 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 - [x] `portal/` 本番公開の確認 (`https://game.kihamda.net/` 到達確認済み)
 - [x] 全ゲームで `lint` と `build` がグリーンか横断確認
 - [x] 全ゲームにドーパミン強化演出（パーティクル/コンボ/ポップアップ/シェイク/WebAudio）追加
+- [x] 全14ゲームに SEO 三点セット（description / OGP / Twitter Card / canonical）追加
+- [x] 全14ゲームに GA4 (G-L7TY3RFZB7) 導入
+- [x] portal 全ページに OGP / canonical 正規化
 
 ### 未完了 / 要確認
 
-- [x] 各ゲームの本番URLが揃っているか確認 (確定ドメイン: `https://game.kihamda.net/`)
-- [x] `portal/` 本番公開の確認 (`https://game.kihamda.net/` 到達確認済み)
-- [x] 全ゲームで `lint` と `build` がグリーンか横断確認
-- [ ] Search Console と GA4 の導入完了確認
-- [ ] AdSense 審査の申請・設置状態の確認
+- [ ] Search Console に `sitemap-index.xml` を送信（人間の作業）
+- [ ] AdSense 審査の申請・設置状態の確認（人間の作業）
+- [ ] PR作成 → main マージ → デプロイ（人間の作業）
+- [ ] 各ゲーム内から portal への内部リンク追加（Phase 1）
 
 ### ボトルネック
 
@@ -91,22 +93,22 @@ extreme_tik_tok_toe/  (← このリポジトリのみ使用)
 
 ### Day 1-14 実行メニュー
 
-| 日     | 優先 | やること                                     | 完了条件                        |
-| ------ | ---- | -------------------------------------------- | ------------------------------- |
-| Day 1  | P0   | 全ゲームの現行URL棚卸し (`portal` 含む)      | `DAILY_LOG.md` にURL一覧がある  |
-| Day 2  | P0   | `games/ntiktaktoe` の lint/build 修正        | `lint`/`build` 緑 ✅            |
-| Day 3  | P0   | `flashreflex` の lint/build 修正             | `lint`/`build` 緑 ✅            |
-| Day 4  | P0   | `gravityfour` の lint/build 修正             | `lint`/`build` 緑 ✅            |
-| Day 5  | P0   | `memoryduel` の lint/build 修正              | `lint`/`build` 緑 ✅            |
-| Day 6  | P0   | `portal` の導線確認とカード改善              | 各ゲームへ1クリック遷移 ✅      |
-| Day 7  | P0   | GA4 を `portal` + 全ゲームへ導入             | Realtime でアクセス確認 ✅      |
-| Day 8  | P1   | Search Console 登録と sitemap 送信           | インデックス送信済み            |
-| Day 9  | P1   | AdSense 申請状態確認と不足修正               | 申請中または再申請完了          |
-| Day 10 | P1   | Game #5 企画決定 (1ページ企画書)             | タイトル/ルール/差別化確定      |
-| Day 11 | P1   | Game #5 雛形作成 (`games/_template/` から)   | 初回コミット完了                |
-| Day 12 | P1   | Game #5 MVP 実装                             | プレイ可能                      |
-| Day 13 | P1   | Game #5 SEO最低限 (title/description/OGP)    | メタ反映確認                    |
-| Day 14 | P0   | `portal/src/data/games.json` 反映 + 公開判定 | ポータル掲載 + 週次レビュー実施 |
+| 日     | 優先 | やること                                     | 完了条件                           |
+| ------ | ---- | -------------------------------------------- | ---------------------------------- |
+| Day 1  | P0   | 全ゲームの現行URL棚卸し (`portal` 含む)      | `DAILY_LOG.md` にURL一覧がある     |
+| Day 2  | P0   | `games/ntiktaktoe` の lint/build 修正        | `lint`/`build` 緑 ✅               |
+| Day 3  | P0   | `flashreflex` の lint/build 修正             | `lint`/`build` 緑 ✅               |
+| Day 4  | P0   | `gravityfour` の lint/build 修正             | `lint`/`build` 緑 ✅               |
+| Day 5  | P0   | `memoryduel` の lint/build 修正              | `lint`/`build` 緑 ✅               |
+| Day 6  | P0   | `portal` の導線確認とカード改善              | 各ゲームへ1クリック遷移 ✅         |
+| Day 7  | P0   | GA4 を `portal` + 全ゲームへ導入             | Realtime でアクセス確認 ✅         |
+| Day 8  | P1   | Search Console 登録と sitemap 送信           | インデックス送信済み               |
+| Day 9  | P1   | AdSense 申請状態確認と不足修正               | 申請中または再申請完了             |
+| Day 10 | P1   | Game #5 企画決定 (1ページ企画書)             | タイトル/ルール/差別化確定 ✅      |
+| Day 11 | P1   | Game #5 雛形作成 (`games/_template/` から)   | 初回コミット完了 ✅                |
+| Day 12 | P1   | Game #5 MVP 実装                             | プレイ可能 ✅                      |
+| Day 13 | P1   | Game #5 SEO最低限 (title/description/OGP)    | メタ反映確認 ✅                    |
+| Day 14 | P0   | `portal/src/data/games.json` 反映 + 公開判定 | ポータル掲載 ✅ + 週次レビュー実施 |
 
 補足: Day 1 の URL 棚卸しは 2026-02-24 時点で完了条件を満たしている。
 確認済み: `https://game.kihamda.net/` / `https://game.kihamda.net/games/ntiktaktoe/` / `https://game.kihamda.net/games/flashreflex/` / `https://game.kihamda.net/games/gravityfour/` / `https://game.kihamda.net/games/memoryduel/`

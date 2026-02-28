@@ -2,9 +2,16 @@
 interface Props {
   title: string;
   description?: string;
+  canonicalUrl?: string;
+  ogType?: string;
 }
 
-const { title, description = "ブラウザゲームポータル" } = Astro.props;
+const {
+  title,
+  description = "ブラウザゲームポータル",
+  canonicalUrl = "https://game.kihamda.net/",
+  ogType = "website",
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -13,6 +20,15 @@ const { title, description = "ブラウザゲームポータル" } = Astro.props
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="game.kihamda.net" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>{title}</title>
     <style>

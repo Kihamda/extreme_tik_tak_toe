@@ -473,14 +473,14 @@ const App = () => {
 
       // Ball attached to paddle
       if (gs.ballAttached) {
+        // recreate every frame so launch angle is fresh on release
         gs.balls = [
           makeBall(gs.paddleX, gs.paddleW, currentSpeed(gs)),
         ];
         const b = gs.balls[0]!;
         b.x = gs.paddleX + gs.paddleW / 2;
         b.y = PADDLE_Y - BALL_R - 1;
-        b.dx = 0;
-        b.dy = 0;
+        // NOTE: keep dx/dy from makeBall — they become the launch velocity
         return;
       }
 

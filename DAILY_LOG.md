@@ -5,6 +5,59 @@
 
 ---
 
+## 2026-02-28
+
+### 作業ログ
+
+- [完了] brickblast バグ修正 → ボールが飛んでいかない問題
+  - 原因: `update()` の attached ブロックで毎フレーム `b.dx = 0; b.dy = 0` を上書きしていた
+  - 修正: その2行を削除し、`makeBall()` が生成した速度をそのまま保持するようにした
+- [完了] molemania バグ修正 → 3体倒すと白画面フリーズ
+  - 原因: `setMoles` の updater 関数内で `setScore` / `setCombo` / `setShaking` / `setFever` / `setParticles` / `setPopups` を呼んでいた (React の state updater は純粋関数でなければならない)。また `doSpawn` の updater 内でもタイマー登録と `setCombo(0)` を呼んでいた
+  - 修正: `whackMole` を全面リファクタ — updater でモルの型・ポイントをローカル変数に捕捉し、全 setState・副作用を updater 外に移動。`doSpawn` も同様にタイマー登録と `setCombo(0)` を updater 外に移動
+
+### 今日の成果
+
+- brickblast・molemania の2本のゲームのバグを修正、ビルド確認済み
+
+### 明日やること
+
+- 引き続き ROADMAP.md のタスクを消化
+
+---
+
+## 2026-02-27
+
+### 作業ログ
+
+- [開始] Day13〜Day14 実行（SEO最低限・portal確認） → 担当: seo-specialist / consultant
+- [完了] Day13 全ゲームSEO最低限対応 → 結果: 成功
+  - 全14ゲームの `index.html` に `description` / OGP全5タグ / Twitter Card 3タグ / `canonical` を追加
+  - 新規10本には `GA4 (G-L7TY3RFZB7)` も追加（Day7で漏れていた分）
+  - portal `Layout.astro` に `canonicalUrl` / `ogType` prop を追加し OGP 全ページ対応
+  - portal index の title を "Game Portal" → "ブラウザゲームポータル | game.kihamda.net" に改善
+  - portal `[id].astro` ゲーム詳細ページも canonical を各ゲームURLに設定
+  - portal ビルド 15ページ成功・全体ビルド exit 0 確認
+- [完了] Day14 portal/src/data/games.json 確認 → 結果: 確認済み（14本登録済み・変更不要）
+- [メモ] Day14 の「公開判定・週次レビュー」は人間の作業として残す
+
+### 今日の成果
+
+- 全14ゲームにSEO三点セット（description・OGP・Twitter Card）を追加
+- GA4 未追加だった新規10本に一括追加（計測漏れ解消）
+- portal のタイトル・OGP・canonical を全ページ正規化
+- 14日スプリント Day 1〜7 + Day 10〜14（実装部分）が全て完了
+
+### 明日やること
+
+- **Day8**: Search Console に `sitemap-index.xml` を送信（人間の作業）
+- **Day9**: AdSense 申請状態確認（人間の作業）
+- **Day14 週次レビュー**: KPI確認・次週方針確定（人間の作業）
+- **PR作成 → main マージ → デプロイ**（人間の作業）
+- Phase 1 移行判定: SNS自動化・各ゲームへの内部リンク（portal誘導）実装着手
+
+---
+
 ## 2026-02-25
 
 ### 作業ログ
