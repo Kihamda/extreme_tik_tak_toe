@@ -77,6 +77,7 @@ import { GameShell, useAudio } from "../../../src/shared";
 ## PWA 対応
 
 PWA はプラットフォーム全体で単一化済み。
+
 - `public/manifest.webmanifest` — プラットフォーム全体 PWA マニフェスト
 - `public/sw.js` — Service Worker
 - 各ゲームに `vite-plugin-pwa` は **不要**

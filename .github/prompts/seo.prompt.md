@@ -12,36 +12,27 @@ description: "SEO 対策・OGP タグを追加してWeb検索からの流入を�
 
 ```html
 <!-- 基本 SEO -->
-<meta
-  name="description"
-  content="[ゲーム説明 120文字以内]"
-/>
-<meta
-  name="keywords"
-  content="[キーワード], ブラウザゲーム, 無料"
-/>
+<meta name="description" content="[ゲーム説明 120文字以内]" />
+<meta name="keywords" content="[キーワード], ブラウザゲーム, 無料" />
 <link rel="canonical" href="https://game.kihamda.net/games/[game-id]/" />
 
 <!-- OGP (Facebook / LINE) -->
-<meta
-  property="og:title"
-  content="[ゲーム名] - 無料ブラウザゲーム"
-/>
-<meta
-  property="og:description"
-  content="[ゲーム説明]"
-/>
+<meta property="og:title" content="[ゲーム名] - 無料ブラウザゲーム" />
+<meta property="og:description" content="[ゲーム説明]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://game.kihamda.net/games/[game-id]/" />
-<meta property="og:image" content="https://game.kihamda.net/thumbnails/[game-id].svg" />
+<meta
+  property="og:image"
+  content="https://game.kihamda.net/thumbnails/[game-id].svg"
+/>
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="[ゲーム名] - 無料ブラウザゲーム" />
 <meta
-  name="twitter:title"
-  content="[ゲーム名] - 無料ブラウザゲーム"
+  name="twitter:image"
+  content="https://game.kihamda.net/thumbnails/[game-id].svg"
 />
-<meta name="twitter:image" content="https://game.kihamda.net/thumbnails/[game-id].svg" />
 ```
 
 ## Step 2: sitemap.xml (自動生成)

@@ -124,6 +124,7 @@ Step 3: 以下を実装する:
 ## ポータル SEO
 
 `plugins/portal-ssg.ts` がビルド時に以下を自動生成する:
+
 - ポータル HTML (meta/OGP/canonical 付き)
 - `sitemap.xml` (全ゲームの URL を含む)
 - `_headers` (Cloudflare Pages キャッシュ設定)

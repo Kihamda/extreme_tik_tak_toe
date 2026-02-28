@@ -32,7 +32,7 @@
 
 - [完了] 単一Vite SSGプロジェクトへの完全統合 → 担当: platform-architect
   - Astro portal を廃止 → plugins/portal-ssg.ts (Vite SSGプラグイン) に移行
-  - ポータルHTML/sitemap.xml/_headers/_redirects をビルド時自動生成
+  - ポータルHTML/sitemap.xml/\_headers/\_redirects をビルド時自動生成
   - portal/src/data/games.json → src/portal/data/games.json に移動
   - portal/public/ → public/ に移動(thumbnails, manifest, sw.js)
   - portal/ ディレクトリ・packages/ ディレクトリ・turbo.json 全削除
@@ -41,8 +41,8 @@
   - ビルド618ms・TSCエラー0・ESLintエラー0で確認済み
 - [完了] 全ドキュメント・agent・prompt・workflowの新アーキテクチャ対応 → 担当: agent-editor
   - .github/copilot-instructions.md 全面書き換え
-  - 10エージェント (.github/agents/*.agent.md) 更新
-  - 9プロンプト (.github/prompts/*.prompt.md) 更新
+  - 10エージェント (.github/agents/\*.agent.md) 更新
+  - 9プロンプト (.github/prompts/\*.prompt.md) 更新
   - 3ワークフロー (build-and-deploy/ci/release-pipeline .yml) 更新
   - README.md・ROADMAP.md 更新
 

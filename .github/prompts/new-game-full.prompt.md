@@ -39,6 +39,7 @@ games/[game-id]/index.html             ← SEO / OGP / canonical / GA4 メタタ
 ```
 
 共通ライブラリを使う場合:
+
 ```ts
 import { GameShell, useAudio } from "../../../src/shared";
 ```
@@ -57,10 +58,16 @@ import { GameShell, useAudio } from "../../../src/shared";
 <meta property="og:description" content="[一言説明]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://game.kihamda.net/games/[game-id]/" />
-<meta property="og:image" content="https://game.kihamda.net/thumbnails/[game-id].svg" />
+<meta
+  property="og:image"
+  content="https://game.kihamda.net/thumbnails/[game-id].svg"
+/>
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="[ゲームタイトル]" />
-<meta name="twitter:image" content="https://game.kihamda.net/thumbnails/[game-id].svg" />
+<meta
+  name="twitter:image"
+  content="https://game.kihamda.net/thumbnails/[game-id].svg"
+/>
 <link rel="canonical" href="https://game.kihamda.net/games/[game-id]/" />
 ```
 

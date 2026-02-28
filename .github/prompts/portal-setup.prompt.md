@@ -23,12 +23,12 @@ Astro は廃止済み。ポータルはビルド時に SSG プラグインが静
 
 `npm run build` (= `tsc -b && vite build`) 実行時に以下を `dist/` に出力:
 
-| ファイル            | 内容                                      |
-| ------------------- | ----------------------------------------- |
-| `index.html`        | ゲーム一覧ポータル (SEO/OGP/構造化データ) |
-| `sitemap.xml`       | 全ゲームの URL を含むサイトマップ         |
-| `_headers`          | Cloudflare Pages キャッシュヘッダー       |
-| `_redirects`        | リダイレクトルール                        |
+| ファイル      | 内容                                      |
+| ------------- | ----------------------------------------- |
+| `index.html`  | ゲーム一覧ポータル (SEO/OGP/構造化データ) |
+| `sitemap.xml` | 全ゲームの URL を含むサイトマップ         |
+| `_headers`    | Cloudflare Pages キャッシュヘッダー       |
+| `_redirects`  | リダイレクトルール                        |
 
 ## プラグインの構成
 
@@ -109,6 +109,7 @@ git push → GitHub Actions が `npm run build` → CF Pages に自動デプロ�
 ## ポータル HTML を変更する場合
 
 `plugins/portal-ssg.ts` を直接編集する。
+
 - `renderPortalHtml()` でポータルのレイアウト・デザインを変更
 - `renderGameCard()` でゲームカードのテンプレートを変更
 - SEO/OGP タグは `renderPortalHtml()` 内で設定

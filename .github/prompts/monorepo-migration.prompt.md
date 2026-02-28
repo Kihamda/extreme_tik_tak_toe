@@ -34,7 +34,7 @@ package.json           # 単一 (ルートのみ)
 npm run build   # = tsc -b && vite build (約600ms)
 ```
 
-出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + _headers + _redirects)
+出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + \_headers + \_redirects)
 
 ## URL構造
 

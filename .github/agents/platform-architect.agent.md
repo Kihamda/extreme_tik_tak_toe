@@ -58,7 +58,7 @@ tsconfig.json          # 単一 (ルートのみ)
 npm run build   # = tsc -b && vite build
 ```
 
-- 出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + _headers + _redirects)
+- 出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + \_headers + \_redirects)
 - 所要時間: 約600ms
 - 個別ゲームのビルドコマンドは不要 (ルート一括)
 

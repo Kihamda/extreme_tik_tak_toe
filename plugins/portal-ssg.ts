@@ -105,8 +105,7 @@ function renderPortalHtml(data: GamesData): string {
   const pathsJson = escapeHtml(JSON.stringify(allGames.map((g) => g.path)));
 
   const title = "ブラウザゲームポータル | game.kihamda.net";
-  const description =
-    `今日の気分で遊べるブラウザゲームポータル。新着・おすすめ・ランダムからすぐプレイ。${games.length}本のゲームが無料で楽しめる`;
+  const description = `今日の気分で遊べるブラウザゲームポータル。新着・おすすめ・ランダムからすぐプレイ。${games.length}本のゲームが無料で楽しめる`;
 
   const newestCardsHtml = newestGames
     .map((g) => renderGameCard(g, "NEW"))

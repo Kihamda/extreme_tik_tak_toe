@@ -31,7 +31,7 @@ package.json           # 単一 (ルートのみ)
 npm run build   # = tsc -b && vite build
 ```
 
-- 出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + _headers + _redirects)
+- 出力: `dist/` (ポータル + 全ゲーム + sitemap.xml + \_headers + \_redirects)
 - 所要時間: 約600ms
 - 個別ゲームのビルドコマンドは不要
 
@@ -48,6 +48,7 @@ npm run build   # = tsc -b && vite build
 ## ポータル
 
 `plugins/portal-ssg.ts` がビルド時に静的 HTML を生成:
+
 - ゲーム一覧ポータル (`dist/index.html`)
 - サイトマップ (`dist/sitemap.xml`)
 - キャッシュヘッダー (`dist/_headers`)

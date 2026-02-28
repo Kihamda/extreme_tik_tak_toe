@@ -11,10 +11,10 @@ PWA はプラットフォーム全体で単一化済み。
 
 ## 現在の PWA 構成
 
-| ファイル | 役割 |
-| --- | --- |
+| ファイル                      | 役割                                               |
+| ----------------------------- | -------------------------------------------------- |
 | `public/manifest.webmanifest` | プラットフォーム全体 PWA マニフェスト (scope: `/`) |
-| `public/sw.js` | Service Worker (手書き・静的配信) |
+| `public/sw.js`                | Service Worker (手書き・静的配信)                  |
 
 - `public/` のファイルは `npm run build` 時に `dist/` にそのままコピーされる
 - Cloudflare Pages が `dist/` を配信するため、追加設定不要
@@ -37,6 +37,7 @@ PWA はプラットフォーム全体で単一化済み。
 
 `public/sw.js` に手書きで配置。
 キャッシュ戦略:
+
 - ゲームアセット (`/games/*/assets/*`) → CacheFirst
 - HTML → NetworkFirst
 - SW 自体 → `Cache-Control: no-store` (`plugins/portal-ssg.ts` が `_headers` で設定)

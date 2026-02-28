@@ -6,22 +6,22 @@
 
 ## ゲームラインナップ (14本)
 
-| ID | タイトル | ジャンル |
-|---|---|---|
-| `ntiktaktoe` | n目並べ | ストラテジー/多人数 |
-| `flashreflex` | Flash Reflex | 反射神経 |
-| `gravityfour` | Gravity Four | ボード/2人対戦 |
-| `memoryduel` | Memory Duel | 記憶/2人対戦 |
-| `snakechaos` | Snake Chaos | アーケード |
-| `merge2048` | Merge 2048 | パズル |
-| `brickblast` | Brick Blast | アーケード |
-| `molemania` | Mole Mania | アーケード |
-| `colorburst` | Color Burst | 反射神経/パズル |
-| `taptarget` | Tap Target | 反射神経 |
-| `simonecho` | Simon Echo | 記憶 |
-| `numhunt` | Num Hunt | 反射神経 |
-| `dodgeblitz` | Dodge Blitz | アーケード |
-| `typingblitz` | Typing Blitz | タイピング |
+| ID            | タイトル     | ジャンル            |
+| ------------- | ------------ | ------------------- |
+| `ntiktaktoe`  | n目並べ      | ストラテジー/多人数 |
+| `flashreflex` | Flash Reflex | 反射神経            |
+| `gravityfour` | Gravity Four | ボード/2人対戦      |
+| `memoryduel`  | Memory Duel  | 記憶/2人対戦        |
+| `snakechaos`  | Snake Chaos  | アーケード          |
+| `merge2048`   | Merge 2048   | パズル              |
+| `brickblast`  | Brick Blast  | アーケード          |
+| `molemania`   | Mole Mania   | アーケード          |
+| `colorburst`  | Color Burst  | 反射神経/パズル     |
+| `taptarget`   | Tap Target   | 反射神経            |
+| `simonecho`   | Simon Echo   | 記憶                |
+| `numhunt`     | Num Hunt     | 反射神経            |
+| `dodgeblitz`  | Dodge Blitz  | アーケード          |
+| `typingblitz` | Typing Blitz | タイピング          |
 
 ## 構成
 
